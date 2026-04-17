@@ -341,7 +341,7 @@ with col2:
                         "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. "
                         "Use 1-2 engaging questions. "
                         "VERIFY: If you see the word 'essential' or a metaphor about szachy/jazz/gry, rewrite the whole thing. "
-                        "Keep it concise and punchy under 250 words"
+                        "Keep it concise and punchy under 100 words"
                         "CHECK: If it sounds like a brochure, it's garbage. Rewrite it as a direct observation."
                     ),
                     expected_output="A conversational, blunt, and factual LinkedIn post. Zero hype, zero corporate metaphors.",
