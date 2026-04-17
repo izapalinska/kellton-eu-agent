@@ -131,12 +131,24 @@ if check_password():
     with col2:
         st.subheader("Result")
         if btn and temat:
-            with st.spinner('Agents are agenting...'):
-                t1 = Task(description=f"Write post about: {temat}", expected_output="LinkedIn post", agent=copywriter)
-                t2 = Task(description="Add MJ prompt at the end.", expected_output="Post + Prompt", agent=art_director)
-                crew = Crew(agents=[copywriter, art_director], tasks=[t1, t2])
-                wynik = str(crew.kickoff())
-                save_to_history(temat, wynik)
-                st.info(wynik)
+            # Rozdzielamy tekst z okienka na osobne linijki (odrzucamy puste)
+            lista_tematow = [t.strip() for t in temat.split('\n') if t.strip()]
+            
+            st.write(f"Zaczynam produkcję: {len(lista_tematow)} postów w kolejce. 🚀")
+            
+            # Pętla - Agenci pracują nad każdym tematem zupełnie osobno
+            for index, pojedynczy_temat in enumerate(lista_tematow):
+                with st.spinner(f'Generuję post {index + 1} z {len(lista_tematow)}...'):
+                    
+                    t1 = Task(description=f"Write post about: {pojedynczy_temat}", expected_output="LinkedIn post", agent=copywriter)
+                    t2 = Task(description="Add MJ prompt at the end.", expected_output="Post + Prompt", agent=art_director)
+                    crew = Crew(agents=[copywriter, art_director], tasks=[t1, t2])
+                    
+                    wynik = str(crew.kickoff())
+                    save_to_history(pojedynczy_temat, wynik)
+                    
+                    st.success(f"Post {index + 1} gotowy!")
+                    st.info(wynik)
+                    
         elif btn:
             st.warning("Please enter a topic first!")
