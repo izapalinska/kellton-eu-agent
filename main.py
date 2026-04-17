@@ -157,7 +157,10 @@ st.markdown("""
         border-right: 1px solid rgba(255,255,255,0.05);
     }
     
-    header, footer {visibility: hidden;}
+    /* TU JEST FIX: Zamiast zabijać cały header, ukrywamy tylko śmieci, żeby strzałka została! */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {background: transparent !important;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -197,17 +200,10 @@ scrape_tool = ScrapeWebsiteTool()
 
 # --- 6. AGENTS ---
 kellton_brand_voice = """
-Identity: Kellton Europe, a trusted digital transformation partner for mid-to-large enterprises. We deliver enterprise-grade expertise with the heart and agility of a true partner. Our Message: The results you need. The partnership you want.
-Audience: Pragmatic, results-oriented senior leaders (CTO, CIO, CEO) who hate fluff and buzzwords.
-Be Casual: Write as you talk. Use contractions (it’s, we’ll, you’re). If it sounds stiff, rewrite it.Be Confident: Use strong, declarative sentences. Take a clear stance. Do not hedge with "might" or "perhaps".
-Active Voice Only: Say "We build apps," not "Apps are built by us".
-Lead with Benefits: Start with what the reader gets, not a list of features.
-Conversational Punctuation: Use a spaced en-dash ( – ) for pauses or emphasis – just like this. Start sentences with 'And' or 'But' if it helps the flow.
-Hooks and CTAs: Use strong hooks and engaging questions or CTAs.
-Banned: NEVER use these words: Synergy, leverage (as a verb), paradigm shift, game-changing, revolutionary, utilize, actionable insights, heavy lifting, low-hanging fruit, circle back, touch base, embark, delve, plethora, multitude, testament to, cutting-edge, future-proof, robust, seamless, state-of-the-art.
+Identity: Kellton Europe. Results-oriented, casual but sharp. 
+Style: Active voice, use contractions, no fluff.
+Banned: synergy, leverage, game-changing, revolutionary, utilize, delve, etc.
 Constraint: No "Not just X, but Y". Use spaced en-dash ( – ).
-No AI-isms: Avoid "In the rapidly evolving world of..." or "delving into the intricacies of...". 
-Strict Style Constraint: Never use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly
 """
 
 researcher = Agent(
