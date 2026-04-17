@@ -10,33 +10,96 @@ from tavily import TavilyClient
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide")
 
-# --- CUSTOM CSS (Branding Kellton Europe) ---
+# --- CUSTOM CSS (Sleek UI 2.0) ---
 st.markdown("""
     <style>
+    /* Podpinamy nowoczesny font Inter */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
+    }
+    
     .main {
         background-color: #0A081B;
+        color: #E2E0EC;
     }
+
+    /* Dopieszczone pole tekstowe */
     .stTextArea textarea {
-        background-color: #161235;
+        background-color: #120E2B;
         color: white;
-        border: 1px solid #452DA2;
+        border: 1px solid #2A1F5C;
+        border-radius: 12px;
+        padding: 16px;
+        font-size: 15px;
+        line-height: 1.5;
+        transition: all 0.3s ease;
+        box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
     }
+    
+    /* Efekt po kliknięciu w pole tekstowe */
+    .stTextArea textarea:focus {
+        border-color: #FC64FF;
+        box-shadow: 0 0 12px rgba(252, 100, 255, 0.2);
+    }
+
+    /* Główny Button (Hover & Cień) */
     .stButton>button {
         background: linear-gradient(45deg, #452DA2, #FC64FF);
         color: white;
         border: none;
-        border-radius: 10px;
-        padding: 10px 25px;
-        font-weight: bold;
+        border-radius: 8px;
+        padding: 12px 28px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 4px 15px rgba(69, 45, 162, 0.4);
     }
+    
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(252, 100, 255, 0.6);
+    }
+
+    /* Panel z wygenerowanym postem (Glassmorphism) */
     .stAlert {
-        background-color: rgba(69, 45, 162, 0.2);
-        border: 1px solid #49E1DD;
-        color: white;
+        background-color: rgba(69, 45, 162, 0.15);
+        border: 1px solid rgba(73, 225, 221, 0.3);
+        border-radius: 12px;
+        color: #F8F7FF;
+        backdrop-filter: blur(10px);
     }
+
+    /* Rozwijany panel ze źródłami */
+    .streamlit-expanderHeader {
+        background-color: #120E2B !important;
+        border-radius: 8px;
+        border: 1px solid #2A1F5C;
+        color: #49E1DD !important;
+        font-weight: 600;
+    }
+
+    /* Separacja kolumn (Linia i marginesy) */
+    [data-testid="column"]:nth-of-type(1) {
+        padding-right: 2.5rem;
+        border-right: 1px solid rgba(69, 45, 162, 0.3);
+    }
+    [data-testid="column"]:nth-of-type(2) {
+        padding-left: 2.5rem;
+    }
+
+    /* Sidebar */
     [data-testid="stSidebar"] {
         background-color: #060514;
-        border-right: 1px solid #452DA2;
+        border-right: 1px solid #1A1440;
+    }
+
+    /* Ostre, nowoczesne nagłówki */
+    h1, h2, h3 {
+        color: #FFFFFF;
+        font-weight: 800;
+        letter-spacing: -0.5px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -177,7 +240,7 @@ if check_password():
             
             # Pętla - Agenci pracują nad każdym tematem zupełnie osobno
             for index, pojedynczy_temat in enumerate(lista_tematow):
-                with st.spinner(f'Generuję post {index + 1} z {len(lista_tematow)}...'):
+                with st.spinner(f'In progress: {index + 1} z {len(lista_tematow)}...'):
                     # Automatycznie pobieramy obecny rok z systemu
                     obecny_rok = datetime.now().year
                     
