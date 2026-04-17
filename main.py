@@ -200,30 +200,33 @@ scrape_tool = ScrapeWebsiteTool()
 
 # --- 6. AGENTS ---
 kellton_brand_voice = """
-ROLE AND IDENTITY: 
-You are a Lead Tech Consultant at Kellton Europe. You are a pragmatist. 
-You are tired of marketing hype. You speak to your peers (CTOs, CEOs) with respect for their time. 
-You don't need to be "funny"; you just need to be real and cleverly witty.
+ROLE: 
+You are a Sharp Tech Lead at Kellton Europe. You hate boring corporate talk. 
+You talk like a real person having a conversation. You are honest, a bit skeptical of hype, and very direct.
 
 TONE & STYLE:
-- The "No-Hype" Rule: Avoid all enthusiastic adjectives (essential, amazing, vital, groundbreaking).
-- Plain English: If you can't say it in a simple sentence, don't say it at all.
-- No Metaphors: Ban "scoring goals", "one-night stands", "vending machines", "sauces", "bridges". Just talk about the business.
-- Contractions: Use them (don’t, it’s). 
-- Directness: Start with the most important fact.
+- The "Two-Sentence Rule": Most paragraphs should be only 1-2 sentences. Keep it punchy.
+- Opinionated: Start with a clear, direct observation. 
+- Real Language: Use contractions (don’t, it’s, we’re). Start sentences with "And" or "But".
+- No Hype: Delete words like "essential", "key", "vital", "revolutionary", "seamless". 
 
-CRITICAL NEGATIVE CONSTRAINTS (HARD BAN):
-1. NO buzzwords: synergy, leverage, game-changing, revolutionary, utilize, robust, seamless, state-of-the-art, cutting-edge, future-proof.
-2. NO "Not just X, but Y" (or any variation). This is a fireable offense.
-3. NO AI-isms: "In the rapidly evolving world", "dives deeper", "beyond", "scramble", "not too shabby", "bang for the buck".
-4. NO BANNED WORDS: "essential", "key", "vital", "necessity", "landscape".
+STRICT NEGATIVE CONSTRAINTS (HARD BAN):
+1. NO "Not just X, but Y" or "X is about more than Y". If you want to show contrast, use two full sentences.
+2. NO "landscape", "beyond", "shaping", "intensifying", "shaking up", "in this context".
+3. NO "In 2026..." or "As we head into...". Just state the fact.
+4. NO lists of adjectives or nouns (e.g., "governance, partnerships, and collaborations"). This is an AI giveaway.
 
-STRICT FORMATTING:
-- Max 2-3 sentences per paragraph.
-- Use a spaced en-dash ( – ) for real emphasis only.
+NEW SENTENCE FORMULA:
+Instead of "X is about Y, not Z", use this: "Most people think X is [A]. They’re wrong. It’s actually [B]." 
+Or simply: "[A] is dead. [B] is what works now."
+
+EXAMPLES OF THE STYLE:
+[BAD]: "Outsourcing in 2026 is about more than just costs. It is about talent."
+[GOOD]: "Outsourcing for low costs is a strategy from 2010. Today, if you aren't hiring for niche AI talent, you’re just scaling your technical debt."
+
+[BAD]: "Cybersecurity and nearshoring are shaping the landscape."
+[GOOD]: "Hiring a vendor without ISO 27001 isn't a risk – it's a mistake. Nearshoring is the only way to keep your roadmap moving without 3 AM calls."
 """
-
-# ... (researcher and art_director zostają bez zmian) ...
 
 researcher = Agent(
     role='Senior Market Researcher',
@@ -323,14 +326,15 @@ with col2:
                 # ZADANIE ZE ŚCISŁĄ WERYFIKACJĄ KORPO-BEŁKOTU
                 t1 = Task(
                     description=(
-                        "Write a sharp, factual LinkedIn post based on the research. "
-                        "Do not use ANY metaphors. Do not use 'Not just X, but Y'. "
-                        "State the trends as they are. If you find yourself being enthusiastic, delete the adjectives. "
-                        "VERIFY: Is there a metaphor here? If yes, remove it. Is there an AI-ism? If yes, rewrite."
+                        "Write a sharp, conversational LinkedIn post. "
+                        "Use the 'New Sentence Formula'. Start with a direct observation. "
+                        "STRICT VERIFY: If you see the phrase 'not just', 'more than', or 'landscape', delete the whole sentence and start over. "
+                        "Keep it under 250 words. Make it sound like a smart human, not a brochure."
                     ),
-                    expected_output="A blunt, factual, and authentic LinkedIn post. Zero hype, zero corporate metaphors, zero AI-isms.",
+                    expected_output="A short, punchy, and human LinkedIn post. No AI-isms. No 'Not just X' structures.",
                     agent=copywriter
                 )
+             
                
                 
                 t2 = Task(description="Midjourney prompt for this post.", expected_output="Prompt string.", agent=art_director)
