@@ -3,3 +3,4 @@ crewai
 langchain-openai
 streamlit
 pandas
+crewai-tools
