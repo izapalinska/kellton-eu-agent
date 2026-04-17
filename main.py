@@ -29,15 +29,16 @@ def load_history():
 # --- 3. CUSTOM CSS ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Instrument+Serif:ital@0;1&display=swap');
+    /* Wjechał Plus Jakarta Sans! */
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&display=swap');
 
     html, body, [class*="css"] {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         background-color: #030303;
     }
 
     .main-title {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 82px !important;
         font-weight: 800;
         color: #FFFFFF;
@@ -63,7 +64,6 @@ st.markdown("""
         min-height: 100vh;
     }
 
-    /* POLA TEKSTOWE - Jasny, elektryczny fiolet (#A765FF) */
     div[data-baseweb="input"] > div, 
     div[data-baseweb="textarea"] > div,
     div[data-baseweb="base-input"] {
@@ -87,7 +87,6 @@ st.markdown("""
         caret-color: #A765FF !important;
     }
 
-    /* GŁÓWNY BUTTON - Gradient Czerwono-Pomarańczowy */
     div[data-testid="stButton"] > button {
         background: linear-gradient(90deg, #E31352 0%, #F86652 100%) !important;
         color: white !important;
@@ -107,7 +106,6 @@ st.markdown("""
         display: none !important;
     }
 
-    /* DOWNLOAD CSV BUTTON - Ten sam gradient co główny button */
     [data-testid="stDownloadButton"] button {
         background: linear-gradient(90deg, #E31352 0%, #F86652 100%) !important;
         border: none !important;
@@ -125,7 +123,6 @@ st.markdown("""
         transform: translateY(-2px) !important;
         box-shadow: 0 10px 25px rgba(248, 102, 82, 0.6) !important;
     }
-    /* Biała Ikona Chart */
     [data-testid="stDownloadButton"] button::before {
         content: '';
         display: inline-block;
@@ -136,7 +133,6 @@ st.markdown("""
         background-size: cover;
     }
 
-    /* BIAŁE KARTY WYNIKÓW - Odświeżony jasny gradient na krawędzi */
     .result-card {
         background: #FFFFFF !important;
         color: #1A1A1A !important;
@@ -201,10 +197,17 @@ scrape_tool = ScrapeWebsiteTool()
 
 # --- 6. AGENTS ---
 kellton_brand_voice = """
-Identity: Kellton Europe. Results-oriented, casual but sharp. 
-Style: Active voice, use contractions, no fluff.
-Banned: synergy, leverage, game-changing, revolutionary, utilize, delve, etc.
+Identity: Kellton Europe, a trusted digital transformation partner for mid-to-large enterprises. We deliver enterprise-grade expertise with the heart and agility of a true partner. Our Message: The results you need. The partnership you want.
+Audience: Pragmatic, results-oriented senior leaders (CTO, CIO, CEO) who hate fluff and buzzwords.
+Be Casual: Write as you talk. Use contractions (it’s, we’ll, you’re). If it sounds stiff, rewrite it.Be Confident: Use strong, declarative sentences. Take a clear stance. Do not hedge with "might" or "perhaps".
+Active Voice Only: Say "We build apps," not "Apps are built by us".
+Lead with Benefits: Start with what the reader gets, not a list of features.
+Conversational Punctuation: Use a spaced en-dash ( – ) for pauses or emphasis – just like this. Start sentences with 'And' or 'But' if it helps the flow.
+Hooks and CTAs: Use strong hooks and engaging questions or CTAs.
+Banned: NEVER use these words: Synergy, leverage (as a verb), paradigm shift, game-changing, revolutionary, utilize, actionable insights, heavy lifting, low-hanging fruit, circle back, touch base, embark, delve, plethora, multitude, testament to, cutting-edge, future-proof, robust, seamless, state-of-the-art.
 Constraint: No "Not just X, but Y". Use spaced en-dash ( – ).
+No AI-isms: Avoid "In the rapidly evolving world of..." or "delving into the intricacies of...". 
+Strict Style Constraint: Never use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly
 """
 
 researcher = Agent(
@@ -243,7 +246,7 @@ with st.sidebar:
                 <line x1="16" y1="17" x2="8" y2="17"></line>
                 <polyline points="10 9 9 9 8 9"></polyline>
             </svg>
-            <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: 1px; color: #A765FF;">Archive</span>
+            <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: 1px; color: #A765FF;">Archive</span>
         </div>
     ''', unsafe_allow_html=True)
     
@@ -252,7 +255,7 @@ with st.sidebar:
     if not hist_df.empty:
         st.dataframe(hist_df[['Date', 'Topic/Notes']].tail(5), use_container_width=True)
     else:
-        st.markdown("<p style='color: #888; font-size: 14px;'>Waiting for your first post...</p>", unsafe_allow_html=True)
+        st.markdown("<p style='font-family: \"Plus Jakarta Sans\", sans-serif; color: #888; font-size: 14px;'>Waiting for your first post...</p>", unsafe_allow_html=True)
         
     st.download_button(
         label="DOWNLOAD CSV", 
@@ -276,7 +279,7 @@ with col1:
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
             </svg>
-            <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: 1px; color: #A765FF;">What are we writing about today?</span>
+            <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: 1px; color: #A765FF;">What are we writing about today?</span>
         </div>
     ''', unsafe_allow_html=True)
     
@@ -290,7 +293,7 @@ with col2:
                 <defs><linearGradient id="chatGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#A765FF" /><stop offset="100%" stop-color="#FF66B2" /></linearGradient></defs>
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             </svg>
-            <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: 1px; color: #A765FF;">Result</span>
+            <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: 1px; color: #A765FF;">Result</span>
         </div>
     ''', unsafe_allow_html=True)
     
@@ -315,9 +318,9 @@ with col2:
                 clean_post = post_text.replace('\n', '<br>')
                 
                 st.markdown(f'''
-                    <div class="result-card">
+                    <div class="result-card" style="font-family: 'Plus Jakarta Sans', sans-serif;">
                         <div style="font-weight: 800; color: #A765FF; font-size: 14px; letter-spacing: 1px; margin-bottom: 15px;">BATCH {index + 1} READY</div>
-                        <div style="color: #1A1A1A; font-size: 16px; margin-bottom: 25px; font-weight: 400;">{clean_post}</div>
+                        <div style="color: #1A1A1A; font-size: 16px; margin-bottom: 25px; font-weight: 400; line-height: 1.6;">{clean_post}</div>
                         <div style="background: #F4F4F9; padding: 20px; border-radius: 12px; border-left: 4px solid #FF66B2;">
                             <strong style="color: #000; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📸 Visual Prompt</strong><br>
                             <span style="color: #444; font-size: 14px; font-style: italic;">{visual_prompt}</span>
