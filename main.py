@@ -180,8 +180,8 @@ if not st.session_state.authenticated:
 # --- 5. LOAD KEYS & TOOLS ---
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 os.environ["TAVILY_API_KEY"] = st.secrets["TAVILY_API_KEY"]
-# USTAWIONY GLOBALNY, NAJSZYBSZY SILNIK (Bez błędów walidacji!)
-os.environ["OPENAI_MODEL_NAME"] = "gpt-4o"
+# Zmieniamy wąskie gardło na potężny silnik
+os.environ["OPENAI_MODEL_NAME"] = "gpt-5-mini"
 
 class CustomTavilySearchTool(BaseTool):
     name: str = "Tavily Web Search"
