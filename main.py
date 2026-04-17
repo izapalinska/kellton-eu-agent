@@ -107,35 +107,36 @@ st.markdown("""
         display: none !important;
     }
 
-    /* DOWNLOAD CSV BUTTON - Pomarańczowy/Czerwony (#F86652) z ikoną Chart */
+    /* DOWNLOAD CSV BUTTON - Ten sam gradient co główny button! */
     [data-testid="stDownloadButton"] button {
-        background: linear-gradient(180deg, #2A2A35 0%, #16161A 100%) !important;
-        border: 1px solid #F86652 !important;
-        color: #F86652 !important;
-        border-radius: 10px !important;
-        font-weight: 700 !important;
+        background: linear-gradient(90deg, #E31352 0%, #F86652 100%) !important;
+        border: none !important;
+        color: white !important;
+        border-radius: 12px !important;
+        padding: 15px !important;
+        font-weight: 800 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        box-shadow: 0 4px 15px rgba(248, 102, 82, 0.1) !important;
+        box-shadow: 0 4px 15px rgba(227, 19, 82, 0.3) !important;
+        transition: all 0.3s ease !important;
     }
     [data-testid="stDownloadButton"] button:hover {
-        background: linear-gradient(180deg, #32323E 0%, #1A1A22 100%) !important;
-        box-shadow: 0 6px 20px rgba(248, 102, 82, 0.3) !important;
-        transform: translateY(-1px) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 10px 25px rgba(248, 102, 82, 0.6) !important;
     }
-    /* Ikona Chart (zakodowana w CSS dla buttona) - Pomarańczowa */
+    /* Ikona Chart (zakodowana w CSS) - Zmieniona na BIAŁĄ (%23FFFFFF) dla kontrastu */
     [data-testid="stDownloadButton"] button::before {
         content: '';
         display: inline-block;
         width: 18px;
         height: 18px;
         margin-right: 10px;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F86652' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='M18 9l-5 5-4-4-5 5'/%3E%3Cpath d='M18 9h-5'/%3E%3Cpath d='M18 9v5'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='M18 9l-5 5-4-4-5 5'/%3E%3Cpath d='M18 9h-5'/%3E%3Cpath d='M18 9v5'/%3E%3C/svg%3E");
         background-size: cover;
     }
 
-    /* BIAŁE KARTY WYNIKÓW - Nowy gradient obwódki */
+    /* BIAŁE KARTY WYNIKÓW */
     .result-card {
         background: #FFFFFF !important;
         color: #1A1A1A !important;
@@ -200,10 +201,18 @@ scrape_tool = ScrapeWebsiteTool()
 
 # --- 6. AGENTS ---
 kellton_brand_voice = """
-Identity: Kellton Europe. Results-oriented, casual but sharp. 
-Style: Active voice, use contractions, no fluff.
-Banned: synergy, leverage, game-changing, revolutionary, utilize, delve, etc.
+Identity: Kellton Europe, a trusted digital transformation partner for mid-to-large enterprises. We deliver enterprise-grade expertise with the heart and agility of a true partner. Our Message: The results you need. The partnership you want.
+Audience: Pragmatic, results-oriented senior leaders (CTO, CIO, CEO) who hate fluff and buzzwords.
+Be Casual: Write as you talk. Use contractions (it’s, we’ll, you’re). If it sounds stiff, rewrite it.Be Confident: Use strong, declarative sentences. Take a clear stance. Do not hedge with "might" or "perhaps".
+Active Voice Only: Say "We build apps," not "Apps are built by us".
+Lead with Benefits: Start with what the reader gets, not a list of features.
+Conversational Punctuation: Use a spaced en-dash ( – ) for pauses or emphasis – just like this. Start sentences with 'And' or 'But' if it helps the flow.
+Hooks and CTAs: Use strong hooks and engaging questions or CTAs.
+Banned: NEVER use these words: Synergy, leverage (as a verb), paradigm shift, game-changing, revolutionary, utilize, actionable insights, heavy lifting, low-hanging fruit, circle back, touch base, embark, delve, plethora, multitude, testament to, cutting-edge, future-proof, robust, seamless, state-of-the-art.
 Constraint: No "Not just X, but Y". Use spaced en-dash ( – ).
+No AI-isms: Avoid "In the rapidly evolving world of..." or "delving into the intricacies of...". 
+Strict Style Constraint: Never use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly
+
 """
 
 researcher = Agent(
@@ -232,7 +241,6 @@ art_director = Agent(
 # --- 7. APP LAYOUT ---
 
 with st.sidebar:
-    # Ikona Document (Wektor SVG) + Fioletowy Nagłówek (#8237FF)
     st.markdown('''
         <div style="display: flex; align-items: center; gap: 10px; margin-top: 20px; margin-bottom: 20px;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#docGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -269,15 +277,15 @@ st.markdown('<span class="serif-akcent">Social Media Specialist</span>', unsafe_
 col1, col2 = st.columns([1, 1.4], gap="large")
 
 with col1:
-    # Ikona Edit (Wektor SVG) + Zielony Nagłówek (#30AD31)
+    # Ikona Edit - Zmieniona na kolory Fioletowo-Różowe (#8237FF i gradient)
     st.markdown('''
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#editGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <defs><linearGradient id="editGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#30AD31" /><stop offset="100%" stop-color="#72DC60" /></linearGradient></defs>
+                <defs><linearGradient id="editGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8237FF" /><stop offset="100%" stop-color="#FF749F" /></linearGradient></defs>
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
             </svg>
-            <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: 1px; color: #30AD31;">What are we writing about today?</span>
+            <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: 1px; color: #8237FF;">What are we writing about today?</span>
         </div>
     ''', unsafe_allow_html=True)
     
@@ -285,7 +293,7 @@ with col1:
     btn = st.button("GET TO WORK, BRO")
 
 with col2:
-    # Ikona Chat (Wektor SVG) + Fioletowy Nagłówek (#8237FF)
+    # Ikona Chat - Fioletowy Nagłówek (#8237FF)
     st.markdown('''
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#chatGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
