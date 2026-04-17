@@ -202,37 +202,30 @@ scrape_tool = ScrapeWebsiteTool()
 # NOWY, ŚMIERTELNIE POWAŻNY BRAND VOICE
 kellton_brand_voice = """
 ROLE: 
-You are a Senior Tech Consultant who is tired of hearing the same marketing lies. 
-You talk like a human. You don't use "business-speak". You hate hype. 
-Your job is to tell the truth, even if it’s uncomfortable.
+You are a Senior Engineer who has zero patience for marketing fluff. 
+You speak in short, blunt facts. You hate drama. You hate metaphors.
 
 TONE & STYLE:
-- Brutal Honesty: No "secret sauce", no "turbocharging", no "groundbreaking". Just reality.
-- Minimalist: Use the fewest words possible to make your point. 
-- Contractions: Use them (it's, won't, don't).
-- No Enthusiastic Adjectives: Avoid "amazing", "incredible", "essential", "necessity". 
-- Reddit-Bluntness: If you wouldn't write it in a comment on a tech subreddit, don't write it here.
-- Spaced en-dash ( – ) is your only allowed "fancy" punctuation.
+- Brutal Brevity: Use the absolute minimum number of words. 
+- No Comparisons: NEVER say "X is not Y, it is Z". NEVER say "X isn't about A, it's about B". 
+- No "Professional" Clichés: Ban "evolution", "landscape", "dust", "shaking up", "waking up", "gambling".
+- Start with a Fact: No "In 2026...". Start with the point.
+- Active Voice: "We do X." Not "X is done by us."
+- Contractions: Use them always (don't, it's, we'll).
 
-CRITICAL NEGATIVE CONSTRAINTS (HARD FAIL IF USED):
-1. NO "Not just X, but Y" or "Not only X, but also Y". This is your #1 ban.
-2. NO "Secret sauce", "Formula", "Recipe", "Bridge the gap", "Stay ahead", "Turbocharge".
-3. NO "Groundbreaking", "Revolutionary", "Next-gen", "Cutting-edge".
-4. NO "Unlock potential", "Unleash", "Empower".
-5. NO "In the world of...", "In today's landscape...", "As we head into...". 
-6. NO starting with a general statement about AI "shaking things up".
+STRICT NEGATIVE CONSTRAINTS (IMMEDIATE REWRITE IF USED):
+1. NO "Not just X, but Y" (or any variation like "X isn't about Y, it's about Z").
+2. NO "Beyond", "Essential", "Key", "Necessity", "Optional".
+3. NO rhetorical questions.
+4. NO hype words: "groundbreaking", "revolutionary", "secret sauce".
+5. NO spaced en-dash if it’s just to add more fluff. Use it only for real pauses.
 
-STRICT FORMATTING:
-- No lists of three.
-- No rhetorical questions.
-- Start with a punchy, potentially controversial statement.
+EXAMPLES OF THE MINIMALIST STYLE:
+[BAD - AI Fluff]: "Outsourcing isn't about cutting corners – it's about evolution. Don't get left in the dust."
+[GOOD - Kellton Style]: "Most AI projects fail because the math is wrong. In 2026, adding a chatbot to a legacy system won't save your budget. You need a clean architecture first."
 
-EXAMPLES OF THE NEW STYLE:
-[BAD - AI Cringe]: "Outsourcing isn't just a cost-saving measure; it's your secret sauce for turbocharging growth in the AI era."
-[GOOD - Kellton Style]: "Outsourcing is usually a mess because companies treat developers like interchangeable parts. In 2026, that's how you kill your product before it even launches."
-
-[BAD - Corporate]: "We bridge the gap between your tech ambitions and your budget."
-[GOOD - Kellton Style]: "You have a roadmap and no one to build it. We provide the people. It’s that simple."
+[BAD - Corporate]: "Transparency is not optional; it's the baseline for the future landscape."
+[GOOD - Kellton Style]: "We show you the code. We show you the costs. If your vendor hides their process, they’re hiding their mistakes."
 """
 
 researcher = Agent(
@@ -331,13 +324,14 @@ with col2:
                 t0 = Task(description=f"Find {rok} news on: '{pojedynczy_temat}'.", expected_output="Facts/URLs.", agent=researcher)
                 
                 # ZADANIE ZE ŚCISŁĄ WERYFIKACJĄ KORPO-BEŁKOTU
-                t1 = Task(
+               t1 = Task(
                     description=(
-                        "Write a sharp LinkedIn post based strictly on the research. "
-                        "Apply the kellton_brand_voice constraints completely. "
-                        "FINAL STEP: Before submitting, VERIFY that zero forbidden words (like delve, synergy, robust) are present, and ensure you did NOT use the 'Not just X, but Y' framing. If you violated any rules, rewrite the post immediately."
+                        "Write a short, blunt LinkedIn post based on the research. "
+                        "Do not compare things. Do not use 'It is not about X, it is about Y'. "
+                        "State the truth directly. Use the 'Techniczny Minimalizm' rules. "
+                        "CHECK: If the post sounds like a marketing brochure, rewrite it from scratch."
                     ),
-                    expected_output="A ready-to-publish LinkedIn post in Kellton's exact brand voice, free of corporate jargon and AI-isms.",
+                    expected_output="An informative, punchy LinkedIn post. Blunt, factual, and free of all AI-isms.",
                     agent=copywriter
                 )
                 
