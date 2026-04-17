@@ -53,6 +53,7 @@ st.markdown("""
         letter-spacing: 4px !important;
         color: #FF66B2; 
         display: block;
+        margin-top: -30px !important;
         margin-bottom: 4rem;
     }
 
