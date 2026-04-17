@@ -13,7 +13,6 @@ st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout=
 # --- CUSTOM CSS (Sleek UI 2.0) ---
 st.markdown("""
     <style>
-    /* Podpinamy nowoczesny font Inter */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
 
     html, body, [class*="css"] {
@@ -25,7 +24,6 @@ st.markdown("""
         color: #E2E0EC;
     }
 
-    /* Dopieszczone pole tekstowe */
     .stTextArea textarea {
         background-color: #120E2B;
         color: white;
@@ -33,18 +31,14 @@ st.markdown("""
         border-radius: 12px;
         padding: 16px;
         font-size: 15px;
-        line-height: 1.5;
         transition: all 0.3s ease;
-        box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
     }
     
-    /* Efekt po kliknięciu w pole tekstowe */
     .stTextArea textarea:focus {
         border-color: #FC64FF;
         box-shadow: 0 0 12px rgba(252, 100, 255, 0.2);
     }
 
-    /* Główny Button (Hover & Cień) */
     .stButton>button {
         background: linear-gradient(45deg, #452DA2, #FC64FF);
         color: white;
@@ -52,9 +46,9 @@ st.markdown("""
         border-radius: 8px;
         padding: 12px 28px;
         font-weight: 600;
-        letter-spacing: 0.5px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition: all 0.2s ease;
         box-shadow: 0 4px 15px rgba(69, 45, 162, 0.4);
+        width: 100%;
     }
     
     .stButton>button:hover {
@@ -62,25 +56,13 @@ st.markdown("""
         box-shadow: 0 6px 20px rgba(252, 100, 255, 0.6);
     }
 
-    /* Panel z wygenerowanym postem (Glassmorphism) */
     .stAlert {
         background-color: rgba(69, 45, 162, 0.15);
         border: 1px solid rgba(73, 225, 221, 0.3);
         border-radius: 12px;
-        color: #F8F7FF;
         backdrop-filter: blur(10px);
     }
 
-    /* Rozwijany panel ze źródłami */
-    .streamlit-expanderHeader {
-        background-color: #120E2B !important;
-        border-radius: 8px;
-        border: 1px solid #2A1F5C;
-        color: #49E1DD !important;
-        font-weight: 600;
-    }
-
-    /* Separacja kolumn (Linia i marginesy) */
     [data-testid="column"]:nth-of-type(1) {
         padding-right: 2.5rem;
         border-right: 1px solid rgba(69, 45, 162, 0.3);
@@ -89,17 +71,9 @@ st.markdown("""
         padding-left: 2.5rem;
     }
 
-    /* Sidebar */
     [data-testid="stSidebar"] {
         background-color: #060514;
         border-right: 1px solid #1A1440;
-    }
-
-    /* Ostre, nowoczesne nagłówki */
-    h1, h2, h3 {
-        color: #FFFFFF;
-        font-weight: 800;
-        letter-spacing: -0.5px;
     }
     </style>
     """, unsafe_allow_html=True)
