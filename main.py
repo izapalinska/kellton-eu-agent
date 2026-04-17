@@ -207,10 +207,19 @@ Active Voice Only: Say "We build apps," not "Apps are built by us".
 Lead with Benefits: Start with what the reader gets, not a list of features.
 Conversational Punctuation: Use a spaced en-dash ( – ) for pauses or emphasis – just like this. Start sentences with 'And' or 'But' if it helps the flow.
 Hooks and CTAs: Use strong hooks and engaging questions or CTAs.
-Banned: NEVER use these words: Synergy, leverage (as a verb), paradigm shift, game-changing, revolutionary, utilize, actionable insights, heavy lifting, low-hanging fruit, circle back, touch base, embark, delve, plethora, multitude, testament to, cutting-edge, future-proof, robust, seamless, state-of-the-art.
-Constraint: No "Not just X, but Y". Use spaced en-dash ( – ).
-No AI-isms: Avoid "In the rapidly evolving world of..." or "delving into the intricacies of...". 
-Strict Style Constraint: Never use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly
+CRITICAL NEGATIVE CONSTRAINTS (PENALTY FOR USING):
+You are STRICTLY FORBIDDEN from using any of the following words or phrases under any circumstances:
+- Synergy, leverage (as a verb), paradigm shift, game-changing, revolutionary, utilize (use "use" instead).
+- Actionable insights, heavy lifting, low-hanging fruit, circle back, touch base.
+- Embark, delve, delving, plethora, multitude, testament to.
+- Cutting-edge, future-proof, robust, seamless, state-of-the-art.
+
+NO AI-ISMS:
+Avoid empty fluff like "In the rapidly evolving world of..." or "delving into the intricacies of...".
+
+STRICT STYLE CONSTRAINTS:
+1. NEVER use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly.
+2. NEVER use the em-dash (—). You MUST use a spaced en-dash ( – ) instead.
 """
 
 researcher = Agent(
@@ -307,7 +316,15 @@ with col2:
             with st.spinner(f'Processing Batch {index + 1}...'):
                 rok = datetime.now().year
                 t0 = Task(description=f"Find {rok} news on: '{pojedynczy_temat}'.", expected_output="Facts/URLs.", agent=researcher)
-                t1 = Task(description="Write LinkedIn post. Brand voice.", expected_output="Post text.", agent=copywriter)
+                t1 = Task(
+                    description=(
+                        "Write a sharp LinkedIn post based strictly on the research. "
+                        "Apply the kellton_brand_voice constraints completely. "
+                        "FINAL STEP: Before submitting, VERIFY that zero forbidden words (like delve, synergy, robust) are present, and ensure you did NOT use the 'Not just X, but Y' framing. If you violated any rules, rewrite the post immediately."
+                    ),
+                    expected_output="A ready-to-publish LinkedIn post in Kellton's exact brand voice, free of corporate jargon and AI-isms.",
+                    agent=copywriter
+                )
                 t2 = Task(description="Midjourney prompt for this post.", expected_output="Prompt string.", agent=art_director)
                 
                 crew = Crew(agents=[researcher, copywriter, art_director], tasks=[t0, t1, t2])
