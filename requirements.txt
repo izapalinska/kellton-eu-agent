@@ -5,4 +5,4 @@ streamlit
 pandas
 crewai-tools
 langchain-community
-duckduckgo-search==3.9.3
+duckduckgo-search==3.8.5
