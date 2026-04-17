@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 import pandas as pd
+from langchain_openai import ChatOpenAI
 from datetime import datetime
 from crewai import Agent, Task, Crew
 from crewai_tools import ScrapeWebsiteTool
@@ -198,6 +199,9 @@ class CustomTavilySearchTool(BaseTool):
 search_tool = CustomTavilySearchTool()
 scrape_tool = ScrapeWebsiteTool()
 
+# Mrozimy kreatywność, wymuszamy konkrety na najnowszym silniku
+zimny_llm = ChatOpenAI(model="gpt-5.4-mini", temperature=0.1)
+
 # --- 6. AGENTS ---
 kellton_brand_voice = """
 ROLE AND IDENTITY: 
@@ -246,6 +250,7 @@ copywriter = Agent(
     backstory=kellton_brand_voice,
     verbose=True,
     tools=[scrape_tool]
+    llm=zimny_llm
 )
 
 art_director = Agent(
