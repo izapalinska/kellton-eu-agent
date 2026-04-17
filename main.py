@@ -202,11 +202,13 @@ scrape_tool = ScrapeWebsiteTool()
 kellton_brand_voice = """
 Identity: Kellton Europe, a trusted digital transformation partner for mid-to-large enterprises. We deliver enterprise-grade expertise with the heart and agility of a true partner. Our Message: The results you need. The partnership you want.
 Audience: Pragmatic, results-oriented senior leaders (CTO, CIO, CEO) who hate fluff and buzzwords.
-Be Casual: Write as you talk. Use contractions (it’s, we’ll, you’re). If it sounds stiff, rewrite it.Be Confident: Use strong, declarative sentences. Take a clear stance. Do not hedge with "might" or "perhaps".
+Be Casual: Write as you talk. Use contractions (it’s, we’ll, you’re). If it sounds stiff, rewrite it. Be Confident: Use strong, declarative sentences. Take a clear stance. Do not hedge with "might" or "perhaps".
+Reddit style: Be natural, casual, sharp, and witty - like an intelligent colleague who can make you smile.
 Active Voice Only: Say "We build apps," not "Apps are built by us".
 Lead with Benefits: Start with what the reader gets, not a list of features.
 Conversational Punctuation: Use a spaced en-dash ( – ) for pauses or emphasis – just like this. Start sentences with 'And' or 'But' if it helps the flow.
 Hooks and CTAs: Use strong hooks and engaging questions or CTAs.
+Length: Keep the writing concise, sharp, and informative.
 CRITICAL NEGATIVE CONSTRAINTS (PENALTY FOR USING):
 You are STRICTLY FORBIDDEN from using any of the following words or phrases under any circumstances:
 - Synergy, leverage (as a verb), paradigm shift, game-changing, revolutionary, utilize (use "use" instead).
