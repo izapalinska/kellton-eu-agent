@@ -8,9 +8,9 @@ from crewai.tools import BaseTool
 from tavily import TavilyClient
 
 # --- 1. PAGE CONFIG ---
-st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide")
+st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide", initial_sidebar_state="expanded")
 
-# --- 2. HISTORY FUNCTIONS (Muszą być przed layoutem!) ---
+# --- 2. HISTORY FUNCTIONS ---
 FILE_NAME = "post_history.csv"
 
 def save_to_history(topic, content):
@@ -26,10 +26,10 @@ def load_history():
         return pd.read_csv(FILE_NAME, encoding='utf-8-sig')
     return pd.DataFrame(columns=['Date', 'Topic/Notes', 'Generated Content'])
 
-# --- 3. CUSTOM CSS (Luxe UI 4.1 - No Italic Labels) ---
+# --- 3. CUSTOM CSS ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Instrument+Serif:ital@0;1&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Instrument+Serif:ital@0;1&display=swap');
 
     html, body, [class*="css"] {
         font-family: 'Inter', sans-serif;
@@ -56,12 +56,12 @@ st.markdown("""
         margin-bottom: 4rem;
     }
 
-    /* NAGŁÓWKI SEKCJI - Proste, nie kursywa */
+    /* NAGŁÓWKI SEKCJI - Taki sam Inter jak główny tytuł */
     .section-label {
-        font-family: 'Instrument Serif', serif;
-        font-style: normal !important; /* Usunięty italic */
-        font-size: 32px !important;
-        letter-spacing: 2px !important;
+        font-family: 'Inter', sans-serif !important;
+        font-weight: 700 !important;
+        font-size: 24px !important;
+        letter-spacing: 1px !important;
         color: #49E1DD;
         margin-bottom: 1.5rem !important;
         display: block;
@@ -74,26 +74,36 @@ st.markdown("""
         min-height: 100vh;
     }
 
-    .stTextArea textarea, .stTextInput input {
+    /* OSTATECZNE USUWANIE CZERWONEGO FOCUSU STREAMLITA */
+    div[data-baseweb="input"] > div, div[data-baseweb="textarea"] > div {
         background-color: #0F0F11 !important;
         border: 1px solid #2A1F5C !important;
         border-radius: 16px !important;
-        color: #FFFFFF !important;
-        padding: 20px !important;
+        transition: all 0.3s ease !important;
     }
-    
-    .stTextArea textarea:focus, .stTextInput input:focus {
+    div[data-baseweb="input"]:focus-within > div, div[data-baseweb="textarea"]:focus-within > div {
         border-color: #FC64FF !important;
         box-shadow: 0 0 15px rgba(252, 100, 255, 0.4) !important;
     }
+    input, textarea {
+        color: #FFFFFF !important;
+        caret-color: #FC64FF !important;
+    }
 
+    /* NAPRAWA BUTTONÓW (Brak różowej kreski) */
     .stButton>button {
         background: linear-gradient(90deg, #452DA2 0%, #FC64FF 100%) !important;
         color: white !important;
+        border: none !important;
         border-radius: 12px !important;
         padding: 18px !important;
         font-weight: 800 !important;
         text-transform: uppercase;
+        box-shadow: 0 4px 15px rgba(252, 100, 255, 0.2) !important;
+    }
+    /* To ta linijka zabija domyślną streamlitową, różową ramkę przed buttonem! */
+    .stButton>button::before, .stButton>button::after {
+        display: none !important;
     }
 
     .result-card {
@@ -106,7 +116,6 @@ st.markdown("""
         box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         border: 2px solid transparent;
     }
-    
     .result-card::before {
         content: '';
         position: absolute;
@@ -125,7 +134,8 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 if not st.session_state.authenticated:
-    st.markdown('<h1 class="main-title">Security <span style="font-family: \'Instrument Serif\'; font-style: italic; color: #FC64FF; font-size: 40px;">Check</span></h1>', unsafe_allow_html=True)
+    # Check ma teraz 8px letter-spacing, jest bardzo szeroki i elegancki
+    st.markdown('<h1 class="main-title">Security <span style="font-family: \'Instrument Serif\'; font-style: italic; color: #FC64FF; font-size: 40px; letter-spacing: 8px;">Check</span></h1>', unsafe_allow_html=True)
     pin = st.text_input("Enter your access PIN:", type="password")
     if st.button("Enter Access"):
         if pin == "4014": 
@@ -156,7 +166,7 @@ scrape_tool = ScrapeWebsiteTool()
 
 # --- 6. AGENTS ---
 kellton_brand_voice = """
-Identity: Kellton Europe, a trusted digital transformation partner for mid-to-large enterprises. We deliver enterprise-grade expertise with the heart and agility of a true partner. Our Message: The results you need. The partnership you want.
+    Identity: Kellton Europe, a trusted digital transformation partner for mid-to-large enterprises. We deliver enterprise-grade expertise with the heart and agility of a true partner. Our Message: The results you need. The partnership you want.
     Audience: Pragmatic, results-oriented senior leaders (CTO, CIO, CEO) who hate fluff and buzzwords.
     Be Casual: Write as you talk. Use contractions (it’s, we’ll, you’re). If it sounds stiff, rewrite it.
     Be Confident: Use strong, declarative sentences. Take a clear stance. Do not hedge with "might" or "perhaps".
@@ -167,8 +177,7 @@ Identity: Kellton Europe, a trusted digital transformation partner for mid-to-la
     Banned: NEVER use these words: Synergy, leverage (as a verb), paradigm shift, game-changing, revolutionary, utilize, actionable insights, heavy lifting, low-hanging fruit, circle back, touch base, embark, delve, plethora, multitude, testament to, cutting-edge, future-proof, robust, seamless, state-of-the-art.
     Constraint: No "Not just X, but Y". Use spaced en-dash ( – ).
     No AI-isms: Avoid "In the rapidly evolving world of..." or "delving into the intricacies of...". 
-    Strict Style Constraint: Never use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly.
-
+    Strict Style Constraint: Never use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly
 """
 
 researcher = Agent(
@@ -196,14 +205,13 @@ art_director = Agent(
 
 # --- 7. APP LAYOUT ---
 
-# Pasek boczny (Archiwum)
-st.sidebar.markdown('<p class="section-label" style="font-size: 24px !important; font-style: normal !important;">📚 Archive</p>', unsafe_allow_html=True)
+# Pasek boczny jest teraz wymuszony ZAWSZE.
+st.sidebar.markdown('<p class="section-label" style="font-size: 20px !important;">📚 Archive</p>', unsafe_allow_html=True)
 hist_df = load_history()
-if not hist_df.empty:
-    st.sidebar.dataframe(hist_df[['Date', 'Topic/Notes']].tail(5), use_container_width=True)
-    st.sidebar.download_button("📥 DOWNLOAD CSV", data=hist_df.to_csv(index=False).encode('utf-8-sig'), file_name="kellton_plan.csv", mime="text/csv")
+# Wyświetlamy tabelę zawsze, nawet jak jeszcze nie masz żadnych wyników
+st.sidebar.dataframe(hist_df[['Date', 'Topic/Notes']].tail(5) if not hist_df.empty else hist_df, use_container_width=True)
+st.sidebar.download_button("📥 DOWNLOAD CSV", data=hist_df.to_csv(index=False).encode('utf-8-sig'), file_name="kellton_plan.csv", mime="text/csv")
 
-# Nagłówek główny
 st.markdown('<h1 class="main-title">KELLTON EUROPE</h1>', unsafe_allow_html=True)
 st.markdown('<span class="serif-akcent">Social Media Specialist</span>', unsafe_allow_html=True)
 
