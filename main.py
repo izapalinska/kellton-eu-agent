@@ -324,7 +324,7 @@ with col2:
                 t0 = Task(description=f"Find {rok} news on: '{pojedynczy_temat}'.", expected_output="Facts/URLs.", agent=researcher)
                 
                 # ZADANIE ZE ŚCISŁĄ WERYFIKACJĄ KORPO-BEŁKOTU
-               t1 = Task(
+                t1 = Task(
                     description=(
                         "Write a short, blunt LinkedIn post based on the research. "
                         "Do not compare things. Do not use 'It is not about X, it is about Y'. "
@@ -334,6 +334,7 @@ with col2:
                     expected_output="An informative, punchy LinkedIn post. Blunt, factual, and free of all AI-isms.",
                     agent=copywriter
                 )
+               
                 
                 t2 = Task(description="Midjourney prompt for this post.", expected_output="Prompt string.", agent=art_director)
                 
