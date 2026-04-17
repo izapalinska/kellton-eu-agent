@@ -144,7 +144,10 @@ st.markdown("""
         border-right: 1px solid rgba(255,255,255,0.05);
     }
     
-    header, footer {visibility: hidden;}
+    /* TO JEST TEN FIX! Ukrywamy śmieci, ale ZOSTAWIAMY strzałkę w headerze */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {background: transparent !important;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -153,7 +156,6 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 if not st.session_state.authenticated:
-    # USUNIĘTY HAK CSS! Streamlit sam ukryje pasek, bo na tym etapie nic w nim nie ma.
     st.markdown('<h1 class="main-title">Security <span style="font-family: \'Instrument Serif\'; font-style: italic; color: #FC64FF; font-size: 40px; letter-spacing: 8px;">Check</span></h1>', unsafe_allow_html=True)
     pin = st.text_input("Enter your access PIN:", type="password")
     if st.button("Enter Access"):
@@ -162,7 +164,7 @@ if not st.session_state.authenticated:
             st.rerun()
         else:
             st.error("Incorrect PIN.")
-    st.stop() # Tu zatrzymujemy kod. Pasek rysuje się dopiero poniżej.
+    st.stop()
 
 # --- 5. LOAD KEYS & TOOLS ---
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
@@ -223,7 +225,6 @@ art_director = Agent(
 
 # --- 7. APP LAYOUT ---
 
-# PANCERNY PASEK BOCZNY
 with st.sidebar:
     st.markdown('<p class="section-label" style="font-size: 20px !important; margin-top: 20px;">📚 Archive</p>', unsafe_allow_html=True)
     hist_df = load_history()
@@ -248,12 +249,12 @@ st.markdown('<span class="serif-akcent">Social Media Specialist</span>', unsafe_
 col1, col2 = st.columns([1, 1.4], gap="large")
 
 with col1:
-    st.markdown('<p class="section-label">WHAT ARE WE WRITING ABOUT?</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-label">What are we writing about today?</p>', unsafe_allow_html=True)
     temat = st.text_area("", height=300, placeholder="Np. Strategia AI w designie --- Trendy UX 2026", label_visibility="collapsed")
     btn = st.button("GET TO WORK, BRO")
 
 with col2:
-    st.markdown('<p class="section-label">RESULT</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-label">Result</p>', unsafe_allow_html=True)
     
     if btn and temat:
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
