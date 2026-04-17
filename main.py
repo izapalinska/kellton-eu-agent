@@ -210,7 +210,6 @@ TONE & STYLE:
 - No Metaphors: STRICTLY BAN comparisons to games (chess, checkers), sports, music (jazz, orchestra), or movies.
 - No Drama: Ban "financial suicide", "adapt or be left behind", "winners", "shift is clear", "levers".
 - No "Waking up": Avoid phrases like "Companies are waking up", "The reality check", or "Risk being left behind". 
-- Business Math over Buzzwords: Talk about ROI, LTV (Lifetime Value), and churn instead of "transformation" or "innovation".
 - Natural Rytm: Use contractions (it’s, don’t). Use a spaced en-dash ( – ) for pauses. 
 - The Pub Test: If it sounds like a PowerPoint slide, delete it. If it sounds like a smart observation at a bar, keep it.
 
@@ -336,15 +335,14 @@ with col2:
                 # ZADANIE ZE ŚCISŁĄ WERYFIKACJĄ KORPO-BEŁKOTU
                 t1 = Task(
                     description=(
-                        "Write a charismatic, conversational Reddit post based on the research. "
-                        "Talk like a skeptic who values ROI over hype. "
+                        "Write a charismatic, conversational LinkedIn post based on the research. "
                         "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. "
                         "Use 1-2 engaging questions. "
                         "VERIFY: If you see the word 'essential' or a metaphor about szachy/jazz/gry, rewrite the whole thing. "
                         "Keep it concise and punchy under 120 words."
                         "CHECK: If it sounds like a brochure, it's garbage. Rewrite it as a direct observation."
                     ),
-                    expected_output="A conversational, and insightful Reddit post. Zero hype, zero corporate metaphors.",
+                    expected_output="A conversational, and insightful LinkedIn post. Zero hype, zero corporate metaphors.",
                     agent=copywriter
                 )
  
