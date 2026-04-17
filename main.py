@@ -3,7 +3,8 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 from crewai import Agent, Task, Crew
-from crewai_tools import ScrapeWebsiteTool, tool
+from crewai_tools import ScrapeWebsiteTool
+from crewai.tools import BaseTool
 from duckduckgo_search import DDGS
 
 # --- PAGE CONFIG ---
@@ -100,24 +101,22 @@ if check_password():
     scrape_tool = ScrapeWebsiteTool()
 
     # --- TOOLS ---
-    @tool("DuckDuckGo Web Search")
-    def search_tool(search_query: str) -> str:
-        """Search the web for the latest information, news, and data on a given topic."""
-        try:
-            with DDGS() as ddgs:
-                # Pobieramy 4 najlepsze wyniki z sieci
-                results = list(ddgs.text(search_query, max_results=4))
-                if results:
-                    return "\n\n".join([f"Link: {r.get('href', '')}\nSnippet: {r.get('body', '')}" for r in results])
-                return "No results found."
-        except Exception as e:
-            return f"Search failed: {str(e)}"
+    class DuckDuckGoSearchTool(BaseTool):
+        name: str = "DuckDuckGo Web Search"
+        description: str = "Search the web for the latest information, news, and data on a given topic."
 
-    search_tool = Tool(
-        name="DuckDuckGo_Web_Search",
-        func=perform_search,
-        description="Search the web for the latest information, news, and data on a given topic."
-    )
+        def _run(self, search_query: str) -> str:
+            try:
+                with DDGS() as ddgs:
+                    # Pobieramy 4 najlepsze wyniki z sieci
+                    results = list(ddgs.text(search_query, max_results=4))
+                    if results:
+                        return "\n\n".join([f"Link: {r.get('href', '')}\nSnippet: {r.get('body', '')}" for r in results])
+                    return "No results found."
+            except Exception as e:
+                return f"Search failed: {str(e)}"
+
+    search_tool = DuckDuckGoSearchTool()
 
     # --- NOWY AGENT: RESEARCHER ---
     researcher = Agent(
