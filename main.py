@@ -122,7 +122,7 @@ if check_password():
     researcher = Agent(
         role='Senior Market Researcher',
         goal='Search the web for the latest, most accurate data, insights, and news regarding the requested topic.',
-        backstory='You are a sharp B2B tech researcher. You ignore fluff and marketing jargon. You find hard facts, statistics, and fresh industry trends. You summarize findings into actionable bullet points.',
+        backstory='You are a sharp B2B tech researcher. You ignore fluff and marketing jargon. You translate any given topic into a short, punchy English search query before searching to get the best global results. You find hard facts, statistics, and fresh industry trends.',
         verbose=True,
         tools=[search_tool]
     )
@@ -173,37 +173,46 @@ if check_password():
             # Pętla - Agenci pracują nad każdym tematem zupełnie osobno
             for index, pojedynczy_temat in enumerate(lista_tematow):
                 with st.spinner(f'Generuję post {index + 1} z {len(lista_tematow)}...'):
-                    # Zadanie 1: Research (Z wymuszonymi źródłami)
+                    # Automatycznie pobieramy obecny rok z systemu
+                    obecny_rok = datetime.now().year
+                    
+                    # Zadanie 1: Research (Z wymuszonym rokiem)
                     t0 = Task(
-                        description=f"Search the web for the latest insights, news, and data on this topic: '{pojedynczy_temat}'. Extract the 3 most important facts. YOU MUST INCLUDE the exact URLs/links of your sources at the bottom of your notes.",
+                        description=f"The current year is {obecny_rok}. Search the web for the latest {obecny_rok} insights, news, and data on this topic: '{pojedynczy_temat}'. Extract the 3 most important facts. YOU MUST INCLUDE the exact URLs/links of your sources at the bottom of your notes.",
                         expected_output="A bulleted list of facts, ending with a 'Sources:' list containing exact URLs.",
                         agent=researcher
                     )
                     
-                    # Zadanie 2: Copywriting (Zmodyfikowane - bierze dane z t0)
+                    # Zadanie 2: Copywriting
                     t1 = Task(
                         description=f"Read the research notes provided by the previous task. Write a LinkedIn post about it. Do NOT invent data. Follow your brand voice.",
                         expected_output="LinkedIn post text.",
                         agent=copywriter
                     )
                     
-                    # Zadanie 3: Grafika (Zostaje bez zmian)
+                    # Zadanie 3: Grafika
                     t2 = Task(
                         description="Read the final LinkedIn post and generate ONE Midjourney prompt for it.",
                         expected_output="Midjourney prompt string.",
                         agent=art_director
                     )
                     
-                    # Zmiana: Crew musi teraz uwzględniać 3 Agentów i 3 Zadania w odpowiedniej kolejności!
                     crew = Crew(agents=[researcher, copywriter, art_director], tasks=[t0, t1, t2])
+                    crew.kickoff() # Odpalamy maszynę, ale nie zapisujemy wyniku z samej góry
                     
-                    wynik = str(crew.kickoff())
-                    save_to_history(pojedynczy_temat, wynik)
+                    # WYCIĄGAMY DANE RĘCZNIE
+                    wynik_post = getattr(t1.output, 'raw_output', str(t1.output))
+                    wynik_prompt = getattr(t2.output, 'raw_output', str(t2.output))
+                    
+                    # Sklejamy to w jeden ładny wynik
+                    pelny_wynik = f"{wynik_post}\n\n---\n📸 **Midjourney Prompt:**\n{wynik_prompt}"
+                    
+                    save_to_history(pojedynczy_temat, pelny_wynik)
                     
                     st.success("Batch is ready!")
-                    st.info(wynik)
+                    st.info(pelny_wynik)
                     
-                    # NOWOŚĆ: Rozwijany panel ze źródłami
+                    # Rozwijany panel ze źródłami
                     with st.expander("🔍 Sources, please!"):
                         surowe_notatki = getattr(t0.output, 'raw_output', str(t0.output))
                         st.write(surowe_notatki)
