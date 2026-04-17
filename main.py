@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 from crewai import Agent, Task, Crew
+from crewai_tools import ScrapeWebsiteTool
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide")
@@ -88,17 +89,20 @@ if check_password():
     Active Voice Only: Say "We build apps," not "Apps are built by us".
     Lead with Benefits: Start with what the reader gets, not a list of features.
     Conversational Punctuation: Use a spaced en-dash ( – ) for pauses or emphasis – just like this. Start sentences with 'And' or 'But' if it helps the flow.
+    Hooks and CTAs: Use strong hooks and engaging questions or CTAs.
     Banned: NEVER use these words: Synergy, leverage (as a verb), paradigm shift, game-changing, revolutionary, utilize, actionable insights, low-hanging fruit, circle back, touch base, embark, delve, plethora, multitude, testament to, cutting-edge, future-proof, robust, seamless, state-of-the-art.
     Constraint: No "Not just X, but Y". Use spaced en-dash ( – ).
     No AI-isms: Avoid "In the rapidly evolving world of..." or "delving into the intricacies of...". 
     Strict Style Constraint: Never use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly.
     """
+    scrape_tool = ScrapeWebsiteTool()
 
     copywriter = Agent(
         role='Lead Content Strategist',
         goal='Write sharp LinkedIn posts that lead with a benefit. Focus on thought leadership and trust for B2B decision-makers. Use a confident, conversational tone.',
         backstory=kellton_brand_voice,
         verbose=True
+        tools=[scrape_tool]
     )
 
     art_director = Agent(
@@ -134,7 +138,7 @@ if check_password():
             # Rozdzielamy tekst z okienka na osobne linijki (odrzucamy puste)
             lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
             
-            st.write(f"Zaczynam produkcję: {len(lista_tematow)} postów w kolejce. 🚀")
+            st.write(f"I'm working: {len(lista_tematow)} queued posts.")
             
             # Pętla - Agenci pracują nad każdym tematem zupełnie osobno
             for index, pojedynczy_temat in enumerate(lista_tematow):
@@ -147,7 +151,7 @@ if check_password():
                     wynik = str(crew.kickoff())
                     save_to_history(pojedynczy_temat, wynik)
                     
-                    st.success(f"Post {index + 1} gotowy!")
+                    st.success(f"Post {index + 1} ready!")
                     st.info(wynik)
                     
         elif btn:
