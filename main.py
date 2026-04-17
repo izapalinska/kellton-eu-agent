@@ -330,11 +330,12 @@ with col2:
                 t1 = Task(
                     description=(
                         "Write a sharp, natural LinkedIn post based on the research. "
-                        "Talk like a person, not a bot. Use the 'Kellton Style' examples as a guide. "
-                        "Avoid all banned words and the 'Not just X, but Y' framing. "
-                        "If it sounds like a corporate brochure, it's a fail. If it sounds like a real person, it's a win."
+                        "STRICT RULE: Use ONLY affirmative, declarative sentences. "
+                        "Do not use negatives to define things (no 'is not', 'isn't'). "
+                        "Do not use contrasts like 'instead of' or 'rather than'. "
+                        "Just state what is true. Keep the 'Bystry Kolega' vibe."
                     ),
-                    expected_output="A conversational, sharp LinkedIn post. Authentic, witty, and zero-bullshit.",
+                    expected_output="A conversational post consisting only of direct, affirmative statements. No 'not X, but Y' structures.",
                     agent=copywriter
                 )
                
