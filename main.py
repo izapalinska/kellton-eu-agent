@@ -10,98 +10,134 @@ from tavily import TavilyClient
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide")
 
-# --- CUSTOM CSS (Linear & Reflect Aesthetic) ---
+# --- CUSTOM CSS (Kellton Luxe UI 3.0) ---
 st.markdown("""
     <style>
-    /* Importujemy fonty: Inter (Sans) i Instrument Serif (Serif) */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Instrument+Serif:ital@0;1&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Instrument+Serif:ital@0;1&display=swap');
 
-    /* Font główny dla całej aplikacji */
+    /* Fundament */
     html, body, [class*="css"] {
         font-family: 'Inter', sans-serif;
-        background-color: #030303; /* Jeszcze głębsza czerń a la Linear */
+        background-color: #050505;
     }
 
-    /* Typografia - Tytuł główny */
+    .main {
+        background-color: #050505;
+    }
+
+    /* Nagłówek główny - Większy i z oddechem */
     .main-title {
-        font-family: 'Instrument Serif', serif;
-        font-size: 52px !important;
-        font-style: italic;
-        font-weight: 400;
+        font-family: 'Inter', sans-serif;
+        font-size: 64px !important;
+        font-weight: 800;
         color: #FFFFFF;
-        margin-bottom: 10px;
-        letter-spacing: -1px;
+        margin-top: 2rem;
+        margin-bottom: 0.5rem;
+        letter-spacing: -2px;
+        line-height: 1;
     }
 
-    /* Akcenty szeryfowe w UI */
     .serif-akcent {
         font-family: 'Instrument Serif', serif;
         font-style: italic;
+        font-size: 32px;
+        color: #FC64FF; /* Neonowy akcent Kellton */
+        margin-bottom: 2rem;
+        display: block;
+    }
+
+    .section-label {
+        font-family: 'Instrument Serif', serif;
+        font-style: italic;
         font-size: 24px;
-        color: #888888;
+        color: #49E1DD; /* Neonowy cyjan Kellton */
+        margin-bottom: 1rem;
+        opacity: 0.9;
     }
 
-    /* Etykiety pól (np. What are we writing about?) */
-    .stTextArea label {
-        font-size: 20px !important;
-        font-weight: 600 !important;
-        color: #FFFFFF !important;
-        margin-bottom: 15px !important;
-    }
-
-    /* Lewa kolumna (Input) */
+    /* Lewa kolumna - Czysta i przestronna */
     [data-testid="column"]:nth-of-type(1) {
-        background-color: transparent;
-        padding: 2rem !important;
+        padding: 3rem !important;
     }
 
-    /* Prawa kolumna (Results) - Osobny vibe */
+    /* Prawa kolumna - Wyraźnie oddzielona z brandowym tłem */
     [data-testid="column"]:nth-of-type(2) {
-        background-color: #08080A; /* Subtelnie inny odcień czerni */
-        border-left: 1px solid #1A1A1A;
-        padding: 2rem !important;
+        background: linear-gradient(180deg, #0A081B 0%, #050505 100%);
+        border-left: 1px solid rgba(69, 45, 162, 0.3);
+        padding: 3rem !important;
         min-height: 100vh;
     }
 
-    /* Pola tekstowe a la Reflect */
+    /* Pola tekstowe - Sleek & Glow */
     .stTextArea textarea {
         background-color: #0F0F11 !important;
         border: 1px solid #1F1F22 !important;
-        border-radius: 12px !important;
-        color: #E2E2E2 !important;
-        selection-background-color: #FC64FF;
+        border-radius: 16px !important;
+        color: #FFFFFF !important;
+        padding: 20px !important;
+        font-size: 16px !important;
+        transition: all 0.3s ease;
+    }
+    
+    .stTextArea textarea:focus {
+        border-color: #452DA2 !important;
+        box-shadow: 0 0 20px rgba(69, 45, 162, 0.2) !important;
     }
 
-    /* Przycisk - Minimalistyczny ale mocny */
+    /* Przycisk - Powrót gradientu i cienia */
     .stButton>button {
-        background: #FFFFFF !important; /* Biały przycisk na czarnym tle - klasyka Linear */
-        color: #000000 !important;
-        border-radius: 6px !important;
-        font-weight: 600 !important;
+        background: linear-gradient(90deg, #452DA2 0%, #FC64FF 100%) !important;
+        color: white !important;
         border: none !important;
-        height: 45px;
-        transition: all 0.2s ease;
+        border-radius: 12px !important;
+        padding: 15px 30px !important;
+        font-weight: 700 !important;
+        font-size: 16px !important;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 10px 30px rgba(252, 100, 255, 0.3);
+        transition: all 0.3s ease !important;
+        margin-top: 1rem;
     }
     
     .stButton>button:hover {
-        background: #F0F0F0 !important;
-        transform: scale(1.01);
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(252, 100, 255, 0.5);
     }
 
-    /* Glassmorphism dla wyników */
+    /* Glassmorphism w wynikach */
     .stAlert {
-        background-color: #121214 !important;
-        border: 1px solid #1F1F22 !important;
-        border-radius: 16px !important;
-        padding: 24px !important;
+        background-color: rgba(18, 18, 20, 0.6) !important;
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-radius: 20px !important;
+        padding: 30px !important;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     }
 
-    /* Ukrycie dekoracji Streamlita */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    /* Poprawa widoczności źródeł */
+    .streamlit-expanderHeader {
+        background-color: rgba(255,255,255,0.03) !important;
+        border: 1px solid rgba(255,255,255,0.05) !important;
+        border-radius: 12px !important;
+    }
     </style>
     """, unsafe_allow_html=True)
+
+# --- APP LAYOUT ---
+st.markdown('<h1 class="main-title">My little junior</h1>', unsafe_allow_html=True)
+st.markdown('<span class="serif-akcent">SoMe specialist</span>', unsafe_allow_html=True)
+
+col1, col2 = st.columns([1, 1.4], gap="large")
+
+with col1:
+    st.markdown('<p class="section-label">What are we writing about today?</p>', unsafe_allow_html=True)
+    temat = st.text_area("", height=300, placeholder="Np. Strategia AI w designie --- Trendy UX 2026", label_visibility="collapsed")
+    btn = st.button("GET TO WORK, BRO")
+
+with col2:
+    st.markdown('<p class="section-label">Result</p>', unsafe_allow_html=True)
+    # Tu leci Twoja pętla z wynikami (if btn and temat...)
 
 # --- PIN LOGIC ---
 if "authenticated" not in st.session_state:
@@ -196,30 +232,19 @@ art_director = Agent(
     verbose=True
 )
 
-# --- APP LAYOUT (Nowa struktura) ---
-st.sidebar.title("📚 Archive")
-hist_df = load_history()
-if not hist_df.empty:
-    st.sidebar.dataframe(hist_df[['Date', 'Topic/Notes']].tail(5), use_container_width=True)
-    st.sidebar.download_button("📥 CSV Export", data=hist_df.to_csv(index=False).encode('utf-8-sig'), file_name="kellton_plan.csv", mime="text/csv")
+# --- APP LAYOUT ---
+st.markdown('<h1 class="main-title">My little junior</h1>', unsafe_allow_html=True)
+st.markdown('<span class="serif-akcent">SoMe specialist</span>', unsafe_allow_html=True)
 
-# 1. Nagłówek główny (Zamiast st.title)
-st.markdown('<h1 class="main-title">My little junior <span class="serif-akcent">SoMe specialist</span></h1>', unsafe_allow_html=True)
-
-# 2. Definicja kolumn (Zmieniamy proporcje na korzyść kolumny wynikowej)
-col1, col2 = st.columns([1, 1.3], gap="small")
+col1, col2 = st.columns([1, 1.4], gap="large")
 
 with col1:
-    # Zamiast st.subheader("Input")
-    st.markdown('<p class="serif-akcent">What are we writing about today?</p>', unsafe_allow_html=True)
-    
-    # Usuwamy napis z wnętrza pola tekstowego, żeby nie dublował nagłówka
-    temat = st.text_area("", height=250, placeholder="Np. Strategia AI w designie --- Trendy UX 2026", label_visibility="collapsed")
+    st.markdown('<p class="section-label">What are we writing about today?</p>', unsafe_allow_html=True)
+    temat = st.text_area("", height=300, placeholder="Np. Strategia AI w designie --- Trendy UX 2026", label_visibility="collapsed")
     btn = st.button("GET TO WORK, BRO")
 
 with col2:
-    # Zamiast st.subheader("Result")
-    st.markdown('<p class="serif-akcent">Result</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-label">Result</p>', unsafe_allow_html=True)
     if btn and temat:
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
         st.write(f"I'm working: {len(lista_tematow)} queued posts.")
