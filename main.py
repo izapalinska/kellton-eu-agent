@@ -3,8 +3,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 from crewai import Agent, Task, Crew
-from crewai_tools import ScrapeWebsiteTool
-from langchain_core.tools import Tool
+from crewai_tools import ScrapeWebsiteTool, tool
 from duckduckgo_search import DDGS
 
 # --- PAGE CONFIG ---
@@ -101,7 +100,9 @@ if check_password():
     scrape_tool = ScrapeWebsiteTool()
 
     # --- TOOLS ---
-    def perform_search(search_query: str) -> str:
+    @tool("DuckDuckGo Web Search")
+    def search_tool(search_query: str) -> str:
+        """Search the web for the latest information, news, and data on a given topic."""
         try:
             with DDGS() as ddgs:
                 # Pobieramy 4 najlepsze wyniki z sieci
