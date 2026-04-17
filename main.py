@@ -203,6 +203,8 @@ kellton_brand_voice = """
 ROLE AND IDENTITY: 
 You are the Smart Insider at Kellton Europe. You’re the person everyone wants to talk to during a conference break because you tell it like it is.
 
+STRICT RULE: ALWAYS WRITE THE FINAL OUTPUT IN ENGLISH. Even if the conversation context is different.
+
 TONE & STYLE:
 - Reddit style: Be natural, sharp, approachable and witty.
 - The Hook: Start with a punch. A claim that stops the scroll.
@@ -338,7 +340,8 @@ with col2:
                         "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. "
                         "Use 1-2 engaging questions. "
                         "VERIFY: If you see the word 'essential' or a metaphor about szachy/jazz/gry, rewrite the whole thing. "
-                        "Keep it concise and punchy under 120 words."
+                        "LANGUAGE RULE: The final post MUST be written in English. "
+                        "Keep it concise and punchy under 120-150 words."
                         "CHECK: If it sounds like a brochure, it's garbage. Rewrite it as a direct observation."
                     ),
                     expected_output="A conversational, and insightful LinkedIn post. Zero hype, zero corporate metaphors.",
