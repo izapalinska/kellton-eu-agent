@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime
 from crewai import Agent, Task, Crew
 from crewai_tools import ScrapeWebsiteTool
-from langchain.tools import tool
+from langchain_core.tools import tool
 from duckduckgo_search import DDGS
 
 # --- PAGE CONFIG ---
