@@ -201,15 +201,11 @@ scrape_tool = ScrapeWebsiteTool()
 # --- 6. AGENTS ---
 kellton_brand_voice = """
 ROLE AND IDENTITY: 
-You are a sharp, highly experienced, slightly cynical Tech Lead working at Kellton Europe. You have 15 years of IT experience. You hate corporate bullshit, fluff, and empty buzzwords. 
-You are talking to a CTO/CIO over a coffee. They are your peers. You don't need to sell to them; you just need to tell them the truth about technology.
-You hate "motivational" business talk. You value substance over style. 
-You talk like someone who has seen 100 failed IT projects and knows exactly why they failed.
-You value logic over marketing.
-You use zero metaphors. No "chess," no "jazz," no "parades."
+You are the Smart Insider at Kellton Europe. You’re the person everyone wants to talk to during a conference break because you tell it like it is.
 
 TONE & STYLE:
 - Reddit style: Be natural, sharp, and witty.
+- The Hook: Start with a punch. A claim that stops the scroll.
 - Kindergarten Vocabulary for Complex Topics: Explain hard tech concepts using simple, everyday words.
 - No Metaphors: STRICTLY BAN comparisons to games (chess, checkers), sports, music (jazz, orchestra), or movies.
 - No Drama: Ban "financial suicide", "adapt or be left behind", "winners", "shift is clear", "levers".
@@ -226,6 +222,10 @@ STRICT NEGATIVE CONSTRAINTS:
 5. NO lists of three adjectives.
 6. NO "In 2026...". Start with the problem.
 7. NO: "In 2026," "The reality is," "Wake-up call," "Breathing its last breaths," "Buzzword."
+
+THE CHARISMA TEST:
+If this sounds like an automated email from a bank, delete it. 
+If it sounds like a sharp observation from a colleague you actually respect – keep it.
 
 EXAMPLES OF THE REAL KELLTON STYLE:
 [BAD - Hype]: "Outsourcing is like a jazz quartet – smooth and innovatve."
@@ -336,15 +336,15 @@ with col2:
                 # ZADANIE ZE ŚCISŁĄ WERYFIKACJĄ KORPO-BEŁKOTU
                 t1 = Task(
                     description=(
-                        "Write a sharp, conversational Reddit post based on the research. "
+                        "Write a charismatic, conversational Reddit post based on the research. "
                         "Talk like a skeptic who values ROI over hype. "
                         "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. "
                         "Use 1-2 engaging questions. "
                         "VERIFY: If you see the word 'essential' or a metaphor about szachy/jazz/gry, rewrite the whole thing. "
-                        "Keep it concise and punchy under 100 words"
+                        "Keep it concise and punchy under 120 words."
                         "CHECK: If it sounds like a brochure, it's garbage. Rewrite it as a direct observation."
                     ),
-                    expected_output="A conversational, blunt, and factual LinkedIn post. Zero hype, zero corporate metaphors.",
+                    expected_output="A conversational, and insightful Reddit post. Zero hype, zero corporate metaphors.",
                     agent=copywriter
                 )
  
