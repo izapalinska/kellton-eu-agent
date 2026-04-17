@@ -4,7 +4,8 @@ import pandas as pd
 from datetime import datetime
 from crewai import Agent, Task, Crew
 from crewai_tools import ScrapeWebsiteTool
-from langchain_community.tools import DuckDuckGoSearchRun
+from langchain.tools import tool
+from duckduckgo_search import DDGS
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide")
@@ -96,10 +97,23 @@ if check_password():
     No AI-isms: Avoid "In the rapidly evolving world of..." or "delving into the intricacies of...". 
     Strict Style Constraint: Never use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly.
     """
+    
     scrape_tool = ScrapeWebsiteTool()
 
-    # --- NOWE NARZĘDZIE BADAWCZE ---
-    search_tool = DuckDuckGoSearchRun()
+    # --- TOOLS ---
+    @tool("DuckDuckGo Web Search")
+    def search_tool(search_query: str) -> str:
+        """Search the web for the latest information, news, and data on a given topic."""
+        try:
+            with DDGS() as ddgs:
+                # Pobieramy 4 najlepsze wyniki z sieci
+                results = list(ddgs.text(search_query, max_results=4))
+                if results:
+                    # Od razu formatujemy to tak, żeby Agent widział linki
+                    return "\n\n".join([f"Link: {r.get('href', '')}\nSnippet: {r.get('body', '')}" for r in results])
+                return "No results found."
+        except Exception as e:
+            return f"Search failed: {str(e)}"
 
     # --- NOWY AGENT: RESEARCHER ---
     researcher = Agent(
