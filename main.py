@@ -26,7 +26,7 @@ def load_history():
         return pd.read_csv(FILE_NAME, encoding='utf-8-sig')
     return pd.DataFrame(columns=['Date', 'Topic/Notes', 'Generated Content'])
 
-# --- 3. CUSTOM CSS (SLEEK & MODERN EDITION) ---
+# --- 3. CUSTOM CSS ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&display=swap');
@@ -50,10 +50,9 @@ st.markdown("""
         -webkit-text-fill-color: transparent;
         animation: shine 5s linear infinite;
     }
-    @keyframes shine {
-        to { background-position: 200% center; }
-    }
+    @keyframes shine { to { background-position: 200% center; } }
 
+    /* POPRAWIONY ODSTĘP PODTYTUŁU */
     .serif-akcent {
         font-family: 'Instrument Serif', serif;
         font-style: italic;
@@ -72,59 +71,48 @@ st.markdown("""
         border-right: 1px solid rgba(255,255,255,0.05);
     }
 
-    /* INPUTY */
-    div[data-baseweb="input"] > div, 
-    div[data-baseweb="textarea"] > div,
-    div[data-baseweb="base-input"] {
-        background-color: #0F0F11 !important;
-        border: 1px solid #2A1F5C !important;
-        border-radius: 16px !important;
-    }
-    
-    input, textarea {
-        color: #FFFFFF !important;
-    }
-
-    /* PRZYCISK Z EFEKTEM GLOW */
-    div[data-testid="stButton"] > button {
-        background: linear-gradient(90deg, #E31352 0%, #F86652 100%) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 12px !important;
-        padding: 18px !important;
-        font-weight: 800 !important;
-        text-transform: uppercase;
-        box-shadow: 0 4px 15px rgba(227, 19, 82, 0.3) !important;
-        transition: all 0.3s ease !important;
-    }
-    div[data-testid="stButton"] > button:hover {
-        transform: translateY(-2px) scale(1.02) !important;
-        box-shadow: 0 0 20px rgba(227, 19, 82, 0.6), 0 0 40px rgba(248, 102, 82, 0.2) !important;
-    }
-
     /* NOWOCZESNA KARTA WYNIKÓW */
     .result-card {
         background: #0F0F12 !important;
         color: #EDEDED !important;
-        padding: 35px;
+        padding: 30px;
         border-radius: 24px;
         margin-bottom: 30px;
-        position: relative;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         border: 1px solid rgba(167, 101, 255, 0.2);
+        box-shadow: 0 15px 45px rgba(0,0,0,0.7);
     }
-    
-    /* STYLIZACJA TABELI */
+
+    /* IKONY NAGŁÓWKÓW */
+    .header-with-icon {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    /* TABELE I INPUTY */
     [data-testid="stDataFrame"], [data-testid="stTable"] {
         border-radius: 15px;
         overflow: hidden;
         border: 1px solid rgba(167, 101, 255, 0.1);
     }
+    div[data-baseweb="textarea"] > div {
+        background-color: #0F0F11 !important;
+        border: 1px solid #2A1F5C !important;
+        border-radius: 16px !important;
+    }
 
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {background: transparent !important;}
+    #MainMenu, footer, header {visibility: hidden;}
     </style>
+    
+    <svg width="0" height="0" style="position:absolute">
+      <defs>
+        <linearGradient id="icon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#A765FF" />
+          <stop offset="100%" style="stop-color:#FF66B2" />
+        </linearGradient>
+      </defs>
+    </svg>
     """, unsafe_allow_html=True)
 
 # --- 4. PIN LOGIC ---
@@ -132,16 +120,21 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 if not st.session_state.authenticated:
-    st.markdown('<h1 class="main-title">Security <span style="font-family: \'Instrument Serif\'; font-style: italic; color: #A765FF; font-size: 40px; letter-spacing: 8px;">Check</span></h1>', unsafe_allow_html=True)
-    st.markdown('<p style="color: #666; margin-top: -10px; margin-bottom: 20px;">Authorized personnel only</p>', unsafe_allow_html=True)
+    st.markdown('''
+        <div class="header-with-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="url(#icon-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            <h1 class="main-title" style="font-size: 50px !important; margin-bottom: 0px !important;">Security Check</h1>
+        </div>
+        <p style="color: #666; margin-bottom: 25px;">Kellton Internal Content Engine • Authorized Personnel Only</p>
+    ''', unsafe_allow_html=True)
     
-    pin = st.text_input("Enter your access PIN:", type="password")
-    if st.button("Enter Access"):
+    pin = st.text_input("Enter Access PIN:", type="password")
+    if st.button("UNLOCK ACCESS"):
         if pin == "4014": 
             st.session_state.authenticated = True
             st.rerun()
         else:
-            st.error("Incorrect PIN.")
+            st.error("Access Denied.")
     st.stop()
 
 # --- 5. LOAD KEYS & TOOLS ---
@@ -231,8 +224,9 @@ art_director = Agent(
 # --- 7. SIDEBAR ---
 with st.sidebar:
     st.markdown('''
-        <div style="display: flex; align-items: center; gap: 10px; margin-top: 20px; margin-bottom: 20px;">
-            <span style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 20px; color: #A765FF;">Archive</span>
+        <div class="header-with-icon" style="margin-top: 20px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#icon-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+            <span style="font-weight: 700; color: #A765FF; font-size: 18px;">Archiwum</span>
         </div>
     ''', unsafe_allow_html=True)
     
@@ -240,7 +234,7 @@ with st.sidebar:
     if not hist_df.empty:
         st.dataframe(hist_df[['Date', 'Topic/Notes']].tail(5), use_container_width=True)
     
-    st.download_button(label="DOWNLOAD CSV", data=hist_df.to_csv(index=False).encode('utf-8-sig'), file_name="kellton_plan.csv", mime="text/csv", use_container_width=True)
+    st.download_button(label="EXPORT CSV", data=hist_df.to_csv(index=False).encode('utf-8-sig'), file_name="kellton_data.csv", mime="text/csv", use_container_width=True)
 
 # --- 8. WIDOK GŁÓWNY ---
 st.markdown('<h1 class="main-title">KELLTON EUROPE</h1>', unsafe_allow_html=True)
@@ -249,12 +243,23 @@ st.markdown('<span class="serif-akcent">Social Media Specialist</span>', unsafe_
 col1, col2 = st.columns([1, 1.4], gap="large")
 
 with col1:
-    st.markdown('<p style="font-weight: 700; font-size: 24px; color: #A765FF;">WHAT ARE WE WRITING TODAY?</p>', unsafe_allow_html=True)
+    st.markdown('''
+        <div class="header-with-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#icon-grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            <span style="font-weight: 700; font-size: 24px; color: #A765FF;">WHAT ARE WE WRITING TODAY?</span>
+        </div>
+    ''', unsafe_allow_html=True)
     temat = st.text_area("", height=250, placeholder="Use any input language you want and separate each idea with ---", label_visibility="collapsed")
     btn = st.button("GET TO WORK, BRO")
 
+
 with col2:
-    st.markdown('<p style="font-weight: 700; font-size: 24px; color: #A765FF;">RESULT</p>', unsafe_allow_html=True)
+    st.markdown('''
+        <div class="header-with-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#icon-grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <span style="font-weight: 700; font-size: 24px; color: #A765FF;">RESULT</span>
+        </div>
+    ''', unsafe_allow_html=True)
     if btn and temat:
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
         for index, pojedynczy_temat in enumerate(lista_tematow):
