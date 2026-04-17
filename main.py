@@ -10,117 +10,98 @@ from tavily import TavilyClient
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide")
 
-# --- CUSTOM CSS (Kellton Luxe UI 3.0) ---
+# --- CUSTOM CSS (Kellton Luxe UI 3.1 - The Final Fix) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Instrument+Serif:ital@0;1&display=swap');
 
-    /* Fundament */
     html, body, [class*="css"] {
         font-family: 'Inter', sans-serif;
-        background-color: #050505;
+        background-color: #030303;
     }
 
-    .main {
-        background-color: #050505;
+    /* Główny kontener aplikacji */
+    .stApp {
+        background-color: #030303;
     }
 
-    /* Nagłówek główny - Większy i z oddechem */
+    /* Nagłówek główny */
     .main-title {
         font-family: 'Inter', sans-serif;
-        font-size: 64px !important;
+        font-size: 72px !important;
         font-weight: 800;
         color: #FFFFFF;
-        margin-top: 2rem;
-        margin-bottom: 0.5rem;
-        letter-spacing: -2px;
-        line-height: 1;
+        margin-top: 1rem;
+        margin-bottom: 0;
+        letter-spacing: -3px;
     }
 
     .serif-akcent {
         font-family: 'Instrument Serif', serif;
         font-style: italic;
-        font-size: 32px;
-        color: #FC64FF; /* Neonowy akcent Kellton */
-        margin-bottom: 2rem;
+        font-size: 38px;
+        color: #FC64FF;
+        margin-bottom: 3rem;
         display: block;
+        text-shadow: 0 0 20px rgba(252, 100, 255, 0.3);
     }
 
+    /* Znacznie większe nagłówki sekcji */
     .section-label {
         font-family: 'Instrument Serif', serif;
         font-style: italic;
-        font-size: 24px;
-        color: #49E1DD; /* Neonowy cyjan Kellton */
-        margin-bottom: 1rem;
-        opacity: 0.9;
+        font-size: 36px !important; /* Powiększone */
+        color: #49E1DD;
+        margin-top: 1rem;
+        margin-bottom: 1.5rem !important;
+        display: block;
     }
 
-    /* Lewa kolumna - Czysta i przestronna */
-    [data-testid="column"]:nth-of-type(1) {
-        padding: 3rem !important;
-    }
-
-    /* Prawa kolumna - Wyraźnie oddzielona z brandowym tłem */
+    /* Prawa kolumna - Wyraźne odcięcie */
     [data-testid="column"]:nth-of-type(2) {
-        background: linear-gradient(180deg, #0A081B 0%, #050505 100%);
-        border-left: 1px solid rgba(69, 45, 162, 0.3);
-        padding: 3rem !important;
-        min-height: 100vh;
+        background-color: #0A081B !important;
+        border-left: 2px solid rgba(69, 45, 162, 0.5) !important;
+        padding: 40px !important;
+        border-radius: 0 0 0 40px;
+        box-shadow: -20px 0 40px rgba(0,0,0,0.5);
     }
 
-    /* Pola tekstowe - Sleek & Glow */
+    /* Pola tekstowe */
     .stTextArea textarea {
         background-color: #0F0F11 !important;
-        border: 1px solid #1F1F22 !important;
-        border-radius: 16px !important;
+        border: 1px solid #2A1F5C !important;
+        border-radius: 20px !important;
         color: #FFFFFF !important;
-        padding: 20px !important;
-        font-size: 16px !important;
-        transition: all 0.3s ease;
-    }
-    
-    .stTextArea textarea:focus {
-        border-color: #452DA2 !important;
-        box-shadow: 0 0 20px rgba(69, 45, 162, 0.2) !important;
+        padding: 24px !important;
+        font-size: 18px !important;
     }
 
-    /* Przycisk - Powrót gradientu i cienia */
+    /* Przycisk z mocnym glow */
     .stButton>button {
         background: linear-gradient(90deg, #452DA2 0%, #FC64FF 100%) !important;
         color: white !important;
-        border: none !important;
-        border-radius: 12px !important;
-        padding: 15px 30px !important;
-        font-weight: 700 !important;
-        font-size: 16px !important;
+        border-radius: 15px !important;
+        padding: 18px 40px !important;
+        font-weight: 800 !important;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        box-shadow: 0 10px 30px rgba(252, 100, 255, 0.3);
-        transition: all 0.3s ease !important;
-        margin-top: 1rem;
+        letter-spacing: 2px;
+        box-shadow: 0 0 30px rgba(252, 100, 255, 0.4) !important;
+        border: none !important;
+        width: 100%;
+    }
+
+    /* Wyniki - Glassmorphism */
+    .stAlert {
+        background: rgba(255, 255, 255, 0.03) !important;
+        backdrop-filter: blur(15px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 24px !important;
+        padding: 30px !important;
+        color: white !important;
     }
     
-    .stButton>button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 40px rgba(252, 100, 255, 0.5);
-    }
-
-    /* Glassmorphism w wynikach */
-    .stAlert {
-        background-color: rgba(18, 18, 20, 0.6) !important;
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.05) !important;
-        border-radius: 20px !important;
-        padding: 30px !important;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    }
-
-    /* Poprawa widoczności źródeł */
-    .streamlit-expanderHeader {
-        background-color: rgba(255,255,255,0.03) !important;
-        border: 1px solid rgba(255,255,255,0.05) !important;
-        border-radius: 12px !important;
-    }
+    /* Ukrycie śmieci Streamlita */
+    header, footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -232,10 +213,11 @@ art_director = Agent(
     verbose=True
 )
 
-# --- APP LAYOUT ---
+# --- APP LAYOUT (The Final One) ---
 st.markdown('<h1 class="main-title">My little junior</h1>', unsafe_allow_html=True)
 st.markdown('<span class="serif-akcent">SoMe specialist</span>', unsafe_allow_html=True)
 
+# Szerokie kolumny z wyraźnym gapem
 col1, col2 = st.columns([1, 1.4], gap="large")
 
 with col1:
@@ -245,6 +227,7 @@ with col1:
 
 with col2:
     st.markdown('<p class="section-label">Result</p>', unsafe_allow_html=True)
+    
     if btn and temat:
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
         st.write(f"I'm working: {len(lista_tematow)} queued posts.")
@@ -259,7 +242,6 @@ with col2:
                 crew = Crew(agents=[researcher, copywriter, art_director], tasks=[t0, t1, t2])
                 crew.kickoff()
                 
-                # Wyciąganie wyników
                 p = getattr(t1.output, 'raw_output', str(t1.output))
                 m = getattr(t2.output, 'raw_output', str(t2.output))
                 res = f"{p}\n\n---\n📸 **Visual Design Prompt:**\n{m}"
