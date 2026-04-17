@@ -10,71 +10,96 @@ from tavily import TavilyClient
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide")
 
-# --- CUSTOM CSS (Twoja wersja Sleek UI 2.0) ---
+# --- CUSTOM CSS (Linear & Reflect Aesthetic) ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+    /* Importujemy fonty: Inter (Sans) i Instrument Serif (Serif) */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Instrument+Serif:ital@0;1&display=swap');
 
+    /* Font główny dla całej aplikacji */
     html, body, [class*="css"] {
         font-family: 'Inter', sans-serif;
-    }
-    
-    .main {
-        background-color: #0A081B;
-        color: #E2E0EC;
+        background-color: #030303; /* Jeszcze głębsza czerń a la Linear */
     }
 
+    /* Typografia - Tytuł główny */
+    .main-title {
+        font-family: 'Instrument Serif', serif;
+        font-size: 52px !important;
+        font-style: italic;
+        font-weight: 400;
+        color: #FFFFFF;
+        margin-bottom: 10px;
+        letter-spacing: -1px;
+    }
+
+    /* Akcenty szeryfowe w UI */
+    .serif-akcent {
+        font-family: 'Instrument Serif', serif;
+        font-style: italic;
+        font-size: 24px;
+        color: #888888;
+    }
+
+    /* Etykiety pól (np. What are we writing about?) */
+    .stTextArea label {
+        font-size: 20px !important;
+        font-weight: 600 !important;
+        color: #FFFFFF !important;
+        margin-bottom: 15px !important;
+    }
+
+    /* Lewa kolumna (Input) */
+    [data-testid="column"]:nth-of-type(1) {
+        background-color: transparent;
+        padding: 2rem !important;
+    }
+
+    /* Prawa kolumna (Results) - Osobny vibe */
+    [data-testid="column"]:nth-of-type(2) {
+        background-color: #08080A; /* Subtelnie inny odcień czerni */
+        border-left: 1px solid #1A1A1A;
+        padding: 2rem !important;
+        min-height: 100vh;
+    }
+
+    /* Pola tekstowe a la Reflect */
     .stTextArea textarea {
-        background-color: #120E2B;
-        color: white;
-        border: 1px solid #2A1F5C;
-        border-radius: 12px;
-        padding: 16px;
-        font-size: 15px;
-        transition: all 0.3s ease;
-    }
-    
-    .stTextArea textarea:focus {
-        border-color: #FC64FF;
-        box-shadow: 0 0 12px rgba(252, 100, 255, 0.2);
+        background-color: #0F0F11 !important;
+        border: 1px solid #1F1F22 !important;
+        border-radius: 12px !important;
+        color: #E2E2E2 !important;
+        selection-background-color: #FC64FF;
     }
 
+    /* Przycisk - Minimalistyczny ale mocny */
     .stButton>button {
-        background: linear-gradient(45deg, #452DA2, #FC64FF);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        padding: 12px 28px;
-        font-weight: 600;
+        background: #FFFFFF !important; /* Biały przycisk na czarnym tle - klasyka Linear */
+        color: #000000 !important;
+        border-radius: 6px !important;
+        font-weight: 600 !important;
+        border: none !important;
+        height: 45px;
         transition: all 0.2s ease;
-        box-shadow: 0 4px 15px rgba(69, 45, 162, 0.4);
-        width: 100%;
     }
     
     .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(252, 100, 255, 0.6);
+        background: #F0F0F0 !important;
+        transform: scale(1.01);
     }
 
+    /* Glassmorphism dla wyników */
     .stAlert {
-        background-color: rgba(69, 45, 162, 0.15);
-        border: 1px solid rgba(73, 225, 221, 0.3);
-        border-radius: 12px;
-        backdrop-filter: blur(10px);
+        background-color: #121214 !important;
+        border: 1px solid #1F1F22 !important;
+        border-radius: 16px !important;
+        padding: 24px !important;
     }
 
-    [data-testid="column"]:nth-of-type(1) {
-        padding-right: 2.5rem;
-        border-right: 1px solid rgba(69, 45, 162, 0.3);
-    }
-    [data-testid="column"]:nth-of-type(2) {
-        padding-left: 2.5rem;
-    }
-
-    [data-testid="stSidebar"] {
-        background-color: #060514;
-        border-right: 1px solid #1A1440;
-    }
+    /* Ukrycie dekoracji Streamlita */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
@@ -171,23 +196,30 @@ art_director = Agent(
     verbose=True
 )
 
-# --- APP LAYOUT ---
+# --- APP LAYOUT (Nowa struktura) ---
 st.sidebar.title("📚 Archive")
 hist_df = load_history()
 if not hist_df.empty:
     st.sidebar.dataframe(hist_df[['Date', 'Topic/Notes']].tail(5), use_container_width=True)
     st.sidebar.download_button("📥 CSV Export", data=hist_df.to_csv(index=False).encode('utf-8-sig'), file_name="kellton_plan.csv", mime="text/csv")
 
-st.title("⚡ My little junior SoMe specialist")
-col1, col2 = st.columns([1, 1], gap="large")
+# 1. Nagłówek główny (Zamiast st.title)
+st.markdown('<h1 class="main-title">My little junior <span class="serif-akcent">SoMe specialist</span></h1>', unsafe_allow_html=True)
+
+# 2. Definicja kolumn (Zmieniamy proporcje na korzyść kolumny wynikowej)
+col1, col2 = st.columns([1, 1.3], gap="small")
 
 with col1:
-    st.subheader("Input")
-    temat = st.text_area("What are we writing about today?", height=200, placeholder="Enter topics separated by ---")
-    btn = st.button("GET TO WORK, BRO", type="primary")
+    # Zamiast st.subheader("Input")
+    st.markdown('<p class="serif-akcent">What are we writing about today?</p>', unsafe_allow_html=True)
+    
+    # Usuwamy napis z wnętrza pola tekstowego, żeby nie dublował nagłówka
+    temat = st.text_area("", height=250, placeholder="Np. Strategia AI w designie --- Trendy UX 2026", label_visibility="collapsed")
+    btn = st.button("GET TO WORK, BRO")
 
 with col2:
-    st.subheader("Result")
+    # Zamiast st.subheader("Result")
+    st.markdown('<p class="serif-akcent">Result</p>', unsafe_allow_html=True)
     if btn and temat:
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
         st.write(f"I'm working: {len(lista_tematow)} queued posts.")
