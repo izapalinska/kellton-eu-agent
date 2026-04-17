@@ -4,7 +4,8 @@ import pandas as pd
 from datetime import datetime
 from crewai import Agent, Task, Crew
 from crewai_tools import ScrapeWebsiteTool
-from langchain_community.tools.tavily_search import TavilySearchResults
+from crewai.tools import BaseTool
+from tavily import TavilyClient
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide")
@@ -101,7 +102,25 @@ if check_password():
     
     # --- TOOLS ---
     os.environ["TAVILY_API_KEY"] = st.secrets["TAVILY_API_KEY"]
-    search_tool = TavilySearchResults(max_results=4)
+
+    class CustomTavilySearchTool(BaseTool):
+        name: str = "Tavily Web Search"
+        description: str = "Search the web for the latest information, news, and data."
+
+        def _run(self, search_query: str) -> str:
+            try:
+                # Łączymy się bezpośrednio z API Tavily
+                client = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
+                response = client.search(query=search_query, max_results=4)
+                
+                results = response.get("results", [])
+                if results:
+                    return "\n\n".join([f"Link: {r.get('url', '')}\nSnippet: {r.get('content', '')}" for r in results])
+                return "No results found."
+            except Exception as e:
+                return f"Search failed: {str(e)}"
+
+    search_tool = CustomTavilySearchTool()
 
 
     # --- NOWY AGENT: RESEARCHER ---
