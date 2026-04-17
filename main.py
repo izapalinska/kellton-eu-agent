@@ -201,17 +201,10 @@ scrape_tool = ScrapeWebsiteTool()
 
 # --- 6. AGENTS ---
 kellton_brand_voice = """
-Identity: Kellton Europe, a trusted digital transformation partner for mid-to-large enterprises. We deliver enterprise-grade expertise with the heart and agility of a true partner. Our Message: The results you need. The partnership you want.
-Audience: Pragmatic, results-oriented senior leaders (CTO, CIO, CEO) who hate fluff and buzzwords.
-Be Casual: Write as you talk. Use contractions (it’s, we’ll, you’re). If it sounds stiff, rewrite it.Be Confident: Use strong, declarative sentences. Take a clear stance. Do not hedge with "might" or "perhaps".
-Active Voice Only: Say "We build apps," not "Apps are built by us".
-Lead with Benefits: Start with what the reader gets, not a list of features.
-Conversational Punctuation: Use a spaced en-dash ( – ) for pauses or emphasis – just like this. Start sentences with 'And' or 'But' if it helps the flow.
-Hooks and CTAs: Use strong hooks and engaging questions or CTAs.
-Banned: NEVER use these words: Synergy, leverage (as a verb), paradigm shift, game-changing, revolutionary, utilize, actionable insights, heavy lifting, low-hanging fruit, circle back, touch base, embark, delve, plethora, multitude, testament to, cutting-edge, future-proof, robust, seamless, state-of-the-art.
+Identity: Kellton Europe. Results-oriented, casual but sharp. 
+Style: Active voice, use contractions, no fluff.
+Banned: synergy, leverage, game-changing, revolutionary, utilize, delve, etc.
 Constraint: No "Not just X, but Y". Use spaced en-dash ( – ).
-No AI-isms: Avoid "In the rapidly evolving world of..." or "delving into the intricacies of...". 
-Strict Style Constraint: Never use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly
 """
 
 researcher = Agent(
@@ -291,3 +284,46 @@ with col1:
     btn = st.button("GET TO WORK, BRO")
 
 with col2:
+    st.markdown('''
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#chatGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <defs><linearGradient id="chatGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#A765FF" /><stop offset="100%" stop-color="#FF66B2" /></linearGradient></defs>
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: 1px; color: #A765FF;">Result</span>
+        </div>
+    ''', unsafe_allow_html=True)
+    
+    if btn and temat:
+        lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
+        
+        for index, pojedynczy_temat in enumerate(lista_tematow):
+            with st.spinner(f'Processing Batch {index + 1}...'):
+                rok = datetime.now().year
+                t0 = Task(description=f"Find {rok} news on: '{pojedynczy_temat}'.", expected_output="Facts/URLs.", agent=researcher)
+                t1 = Task(description="Write LinkedIn post. Brand voice.", expected_output="Post text.", agent=copywriter)
+                t2 = Task(description="Midjourney prompt for this post.", expected_output="Prompt string.", agent=art_director)
+                
+                crew = Crew(agents=[researcher, copywriter, art_director], tasks=[t0, t1, t2])
+                crew.kickoff()
+                
+                post_text = getattr(t1.output, 'raw_output', str(t1.output))
+                visual_prompt = getattr(t2.output, 'raw_output', str(t2.output))
+                
+                save_to_history(pojedynczy_temat, f"{post_text}\n\nPrompt: {visual_prompt}")
+                
+                clean_post = post_text.replace('\n', '<br>')
+                
+                st.markdown(f'''
+                    <div class="result-card">
+                        <div style="font-weight: 800; color: #A765FF; font-size: 14px; letter-spacing: 1px; margin-bottom: 15px;">BATCH {index + 1} READY</div>
+                        <div style="color: #1A1A1A; font-size: 16px; margin-bottom: 25px; font-weight: 400;">{clean_post}</div>
+                        <div style="background: #F4F4F9; padding: 20px; border-radius: 12px; border-left: 4px solid #FF66B2;">
+                            <strong style="color: #000; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📸 Visual Prompt</strong><br>
+                            <span style="color: #444; font-size: 14px; font-style: italic;">{visual_prompt}</span>
+                        </div>
+                    </div>
+                ''', unsafe_allow_html=True)
+                
+                with st.expander("🔍 Sources, please!"):
+                    st.write(getattr(t0.output, 'raw_output', str(t0.output)))
