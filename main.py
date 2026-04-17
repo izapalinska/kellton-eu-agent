@@ -10,7 +10,7 @@ from tavily import TavilyClient
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide")
 
-# --- CUSTOM CSS (Luxe UI 4.0 - Perfect Focus & Separation) ---
+# --- CUSTOM CSS (Kellton Final Polish & Result Cards) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Instrument+Serif:ital@0;1&display=swap');
@@ -20,88 +20,71 @@ st.markdown("""
         background-color: #030303;
     }
 
-    .stApp {
-        background-color: #030303;
-    }
-
-    /* Nagłówki */
     .main-title {
         font-family: 'Inter', sans-serif;
         font-size: 82px !important;
         font-weight: 800;
         color: #FFFFFF;
-        margin-top: 0;
-        margin-bottom: 0;
+        margin-bottom: -25px !important; /* Drastycznie mniejszy odstęp */
         letter-spacing: -4px;
-        line-height: 1;
     }
 
     .serif-akcent {
         font-family: 'Instrument Serif', serif;
         font-style: italic;
-        font-size: 42px;
+        font-size: 52px !important; /* Większy subheader */
+        letter-spacing: 4px !important; /* Większy spacing między literami */
         color: #FC64FF;
-        margin-bottom: 4rem;
         display: block;
+        margin-bottom: 3.5rem;
     }
 
     .section-label {
         font-family: 'Instrument Serif', serif;
         font-style: italic;
-        font-size: 40px !important;
+        font-size: 28px !important; /* Mniejszy niż sub-nagłówek */
+        letter-spacing: 3px !important; /* Większy spacing */
         color: #49E1DD;
-        margin-bottom: 2rem !important;
-        display: block;
+        margin-bottom: 1rem !important;
     }
 
-    /* Prawa kolumna - Wyraźnie szara, odcięta od czerni */
+    /* Prawa kolumna - Gradientowy vibe */
     [data-testid="column"]:nth-of-type(2) {
-        background-color: #16161A !important; /* Ciemnoszary, nie czarny */
-        border-left: 1px solid #2D2D33 !important;
+        background: linear-gradient(160deg, #121217 0%, #050505 100%) !important;
+        border-left: 1px solid rgba(255,255,255,0.05) !important;
         padding: 50px !important;
         min-height: 100vh;
     }
 
-    /* Pola tekstowe i PIN - KONIEC Z CZERWONYM */
-    .stTextArea textarea, .stTextInput input {
-        background-color: #0F0F11 !important;
-        border: 1px solid #2A1F5C !important;
-        border-radius: 16px !important;
-        color: #FFFFFF !important;
-        padding: 20px !important;
-        font-size: 18px !important;
-        transition: all 0.3s ease-in-out !important;
+    /* KARTA WYNIKU - Biała z gradientową obwódką */
+    .result-card {
+        background: #FFFFFF !important;
+        color: #000000 !important;
+        padding: 30px;
+        border-radius: 20px;
+        margin-bottom: 25px;
+        position: relative;
+        font-size: 16px;
+        line-height: 1.6;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        border: 2px solid transparent;
+        background-clip: padding-box;
     }
     
-    /* Gradientowy focus glow zamiast czerwonego */
+    /* Trick na gradientową obwódkę ramki */
+    .result-card::before {
+        content: '';
+        position: absolute;
+        top: -3px; bottom: -3px; left: -3px; right: -3px;
+        background: linear-gradient(90deg, #452DA2, #FC64FF);
+        z-index: -1;
+        border-radius: 23px;
+    }
+
     .stTextArea textarea:focus, .stTextInput input:focus {
         border-color: #FC64FF !important;
         box-shadow: 0 0 15px rgba(252, 100, 255, 0.4) !important;
-        outline: none !important;
     }
-
-    /* Przycisk */
-    .stButton>button {
-        background: linear-gradient(90deg, #452DA2 0%, #FC64FF 100%) !important;
-        color: white !important;
-        border-radius: 12px !important;
-        padding: 20px !important;
-        font-weight: 800 !important;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        box-shadow: 0 10px 30px rgba(69, 45, 162, 0.3) !important;
-        border: none !important;
-        width: 100%;
-    }
-
-    /* Wyniki - Glassmorphism */
-    .stAlert {
-        background: rgba(255, 255, 255, 0.03) !important;
-        backdrop-filter: blur(20px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-radius: 24px !important;
-    }
-
     header, footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
@@ -180,14 +163,30 @@ art_director = Agent(
     verbose=True
 )
 
-# --- APP LAYOUT (DOKŁADNIE RAZ) ---
+# --- APP LAYOUT (The Master Version) ---
+
+# 1. PRZYWRACAMY ARCHIWUM (SIDEBAR)
+st.sidebar.markdown('<p class="section-label" style="font-size: 24px !important;">📚 Archive</p>', unsafe_allow_html=True)
+hist_df = load_history()
+if not hist_df.empty:
+    st.sidebar.dataframe(hist_df[['Date', 'Topic/Notes']].tail(5), use_container_width=True)
+    st.sidebar.download_button(
+        label="📥 DOWNLOAD CSV",
+        data=hist_df.to_csv(index=False).encode('utf-8-sig'),
+        file_name="kellton_content_plan.csv",
+        mime="text/csv"
+    )
+
+# 2. NAGŁÓWEK GŁÓWNY (Zacieśniony odstęp)
 st.markdown('<h1 class="main-title">KELLTON EUROPE</h1>', unsafe_allow_html=True)
 st.markdown('<span class="serif-akcent">Social Media Specialist</span>', unsafe_allow_html=True)
 
+# 3. KOLUMNY
 col1, col2 = st.columns([1, 1.4], gap="large")
 
 with col1:
     st.markdown('<p class="section-label">What are we writing about today?</p>', unsafe_allow_html=True)
+    # label_visibility="collapsed" usuwa systemowy napis nad polem
     temat = st.text_area("", height=300, placeholder="Np. Strategia AI w designie --- Trendy UX 2026", label_visibility="collapsed")
     btn = st.button("GET TO WORK, BRO")
 
@@ -196,23 +195,45 @@ with col2:
     
     if btn and temat:
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
-        st.write(f"I'm working: {len(lista_tematow)} queued posts.")
+        st.write(f"Working on {len(lista_tematow)} posts...")
         
         for index, pojedynczy_temat in enumerate(lista_tematow):
-            with st.spinner(f'Processing {index + 1}...'):
+            with st.spinner(f'Agent is thinking (Batch {index + 1})...'):
+                # LOGIKA CREWAI
                 rok = datetime.now().year
-                t0 = Task(description=f"Search for {rok} news on: '{pojedynczy_temat}'. URLs required.", expected_output="Facts and Sources.", agent=researcher)
+                t0 = Task(description=f"Find {rok} insights for: '{pojedynczy_temat}'. Need URLs.", expected_output="Facts/Links.", agent=researcher)
                 t1 = Task(description="Write LinkedIn post. Brand voice.", expected_output="Post text.", agent=copywriter)
-                t2 = Task(description="Generate Midjourney prompt.", expected_output="Prompt string.", agent=art_director)
+                t2 = Task(description="Midjourney prompt for this post.", expected_output="Prompt string.", agent=art_director)
                 
                 crew = Crew(agents=[researcher, copywriter, art_director], tasks=[t0, t1, t2])
                 crew.kickoff()
                 
-                p = getattr(t1.output, 'raw_output', str(t1.output))
-                m = getattr(t2.output, 'raw_output', str(t2.output))
-                res = f"{p}\n\n---\n📸 **Visual Design Prompt:**\n{m}"
+                # ZBIERANIE WYNIKÓW
+                post_text = getattr(t1.output, 'raw_output', str(t1.output))
+                visual_prompt = getattr(t2.output, 'raw_output', str(t2.output))
                 
-                st.success(f"Batch {index+1} ready!")
-                st.info(res)
+                # Formatowanie do bazy danych (z zachowaniem nowej linii)
+                res_to_save = f"{post_text}\n\nPrompt: {visual_prompt}"
+                save_to_history(pojedynczy_temat, res_to_save)
+                
+                # WYŚWIETLANIE W BIAŁEJ KARCIE (Zamiast st.info)
+                # Zamieniamy znaki nowej linii na <br> dla HTML
+                clean_post = post_text.replace('\n', '<br>')
+                
+                st.markdown(f'''
+                    <div class="result-card">
+                        <div style="font-weight: 800; color: #452DA2; font-size: 14px; letter-spacing: 1px; margin-bottom: 15px;">
+                            BATCH {index + 1} READY
+                        </div>
+                        <div style="color: #1A1A1A; font-size: 16px; margin-bottom: 20px;">
+                            {clean_post}
+                        </div>
+                        <div style="background: #F8F8F8; padding: 15px; border-radius: 10px; border-left: 4px solid #FC64FF;">
+                            <strong style="color: #000;">📸 Visual Prompt:</strong><br>
+                            <span style="color: #444; font-size: 14px; font-style: italic;">{visual_prompt}</span>
+                        </div>
+                    </div>
+                ''', unsafe_allow_html=True)
+                
                 with st.expander("🔍 Sources, please!"):
                     st.write(getattr(t0.output, 'raw_output', str(t0.output)))
