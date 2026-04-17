@@ -26,7 +26,6 @@ def load_history():
         return pd.read_csv(FILE_NAME, encoding='utf-8-sig')
     return pd.DataFrame(columns=['Date', 'Topic/Notes', 'Generated Content'])
 
-# --- 3. CUSTOM CSS ---
 # --- 3. CUSTOM CSS (FULL REPAIRED VERSION) ---
 st.markdown("""
     <style>
@@ -154,7 +153,7 @@ if not st.session_state.authenticated:
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="url(#icon-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
             <h1 class="main-title" style="font-size: 50px !important; margin-bottom: 0px !important;">Security Check</h1>
         </div>
-        <p style="color: #666; margin-bottom: 25px;">Kellton Internal Content Engine • Authorized Personnel Only</p>
+        <p style="color: #666; margin-bottom: 25px;">Czołem, kluski z rosołem!</p>
     ''', unsafe_allow_html=True)
     
     pin = st.text_input("Enter Access PIN:", type="password")
