@@ -51,7 +51,7 @@ st.markdown("""
         font-style: italic;
         font-size: 52px !important;
         letter-spacing: 4px !important;
-        color: #FF749F; 
+        color: #FF66B2; 
         display: block;
         margin-bottom: 4rem;
     }
@@ -63,7 +63,7 @@ st.markdown("""
         min-height: 100vh;
     }
 
-    /* POLA TEKSTOWE - Fioletowy Focus (#8237FF) */
+    /* POLA TEKSTOWE - Jasny, elektryczny fiolet (#A765FF) */
     div[data-baseweb="input"] > div, 
     div[data-baseweb="textarea"] > div,
     div[data-baseweb="base-input"] {
@@ -77,14 +77,14 @@ st.markdown("""
     div[data-baseweb="base-input"]:focus-within,
     .stTextArea textarea:focus, 
     .stTextInput input:focus {
-        border-color: #8237FF !important;
-        box-shadow: 0 0 0 1px #8237FF, 0 0 15px rgba(130, 55, 255, 0.4) !important;
+        border-color: #A765FF !important;
+        box-shadow: 0 0 0 1px #A765FF, 0 0 15px rgba(167, 101, 255, 0.4) !important;
         outline: none !important;
     }
 
     input, textarea {
         color: #FFFFFF !important;
-        caret-color: #8237FF !important;
+        caret-color: #A765FF !important;
     }
 
     /* GŁÓWNY BUTTON - Gradient Czerwono-Pomarańczowy */
@@ -107,7 +107,7 @@ st.markdown("""
         display: none !important;
     }
 
-    /* DOWNLOAD CSV BUTTON - Ten sam gradient co główny button! */
+    /* DOWNLOAD CSV BUTTON - Ten sam gradient co główny button */
     [data-testid="stDownloadButton"] button {
         background: linear-gradient(90deg, #E31352 0%, #F86652 100%) !important;
         border: none !important;
@@ -125,7 +125,7 @@ st.markdown("""
         transform: translateY(-2px) !important;
         box-shadow: 0 10px 25px rgba(248, 102, 82, 0.6) !important;
     }
-    /* Ikona Chart (zakodowana w CSS) - Zmieniona na BIAŁĄ (%23FFFFFF) dla kontrastu */
+    /* Biała Ikona Chart */
     [data-testid="stDownloadButton"] button::before {
         content: '';
         display: inline-block;
@@ -136,7 +136,7 @@ st.markdown("""
         background-size: cover;
     }
 
-    /* BIAŁE KARTY WYNIKÓW */
+    /* BIAŁE KARTY WYNIKÓW - Odświeżony jasny gradient na krawędzi */
     .result-card {
         background: #FFFFFF !important;
         color: #1A1A1A !important;
@@ -151,7 +151,7 @@ st.markdown("""
         content: '';
         position: absolute;
         top: -2px; bottom: -2px; left: -2px; right: -2px;
-        background: linear-gradient(90deg, #8237FF, #FF749F); 
+        background: linear-gradient(90deg, #A765FF, #FF66B2); 
         z-index: -1;
         border-radius: 26px;
     }
@@ -170,7 +170,7 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 if not st.session_state.authenticated:
-    st.markdown('<h1 class="main-title">Security <span style="font-family: \'Instrument Serif\'; font-style: italic; color: #8237FF; font-size: 40px; letter-spacing: 8px;">Check</span></h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-title">Security <span style="font-family: \'Instrument Serif\'; font-style: italic; color: #A765FF; font-size: 40px; letter-spacing: 8px;">Check</span></h1>', unsafe_allow_html=True)
     pin = st.text_input("Enter your access PIN:", type="password")
     if st.button("Enter Access"):
         if pin == "4014": 
@@ -212,7 +212,6 @@ Banned: NEVER use these words: Synergy, leverage (as a verb), paradigm shift, ga
 Constraint: No "Not just X, but Y". Use spaced en-dash ( – ).
 No AI-isms: Avoid "In the rapidly evolving world of..." or "delving into the intricacies of...". 
 Strict Style Constraint: Never use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly
-
 """
 
 researcher = Agent(
@@ -244,14 +243,14 @@ with st.sidebar:
     st.markdown('''
         <div style="display: flex; align-items: center; gap: 10px; margin-top: 20px; margin-bottom: 20px;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#docGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <defs><linearGradient id="docGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8237FF" /><stop offset="100%" stop-color="#FF749F" /></linearGradient></defs>
+                <defs><linearGradient id="docGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#A765FF" /><stop offset="100%" stop-color="#FF66B2" /></linearGradient></defs>
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
                 <line x1="16" y1="13" x2="8" y2="13"></line>
                 <line x1="16" y1="17" x2="8" y2="17"></line>
                 <polyline points="10 9 9 9 8 9"></polyline>
             </svg>
-            <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: 1px; color: #8237FF;">Archive</span>
+            <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 20px; letter-spacing: 1px; color: #A765FF;">Archive</span>
         </div>
     ''', unsafe_allow_html=True)
     
@@ -277,15 +276,14 @@ st.markdown('<span class="serif-akcent">Social Media Specialist</span>', unsafe_
 col1, col2 = st.columns([1, 1.4], gap="large")
 
 with col1:
-    # Ikona Edit - Zmieniona na kolory Fioletowo-Różowe (#8237FF i gradient)
     st.markdown('''
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#editGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <defs><linearGradient id="editGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8237FF" /><stop offset="100%" stop-color="#FF749F" /></linearGradient></defs>
+                <defs><linearGradient id="editGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#A765FF" /><stop offset="100%" stop-color="#FF66B2" /></linearGradient></defs>
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
             </svg>
-            <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: 1px; color: #8237FF;">What are we writing about today?</span>
+            <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: 1px; color: #A765FF;">What are we writing about today?</span>
         </div>
     ''', unsafe_allow_html=True)
     
@@ -293,47 +291,3 @@ with col1:
     btn = st.button("GET TO WORK, BRO")
 
 with col2:
-    # Ikona Chat - Fioletowy Nagłówek (#8237FF)
-    st.markdown('''
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#chatGrad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <defs><linearGradient id="chatGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8237FF" /><stop offset="100%" stop-color="#FF749F" /></linearGradient></defs>
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-            <span style="font-family: 'Inter', sans-serif; font-weight: 700; font-size: 24px; letter-spacing: 1px; color: #8237FF;">Result</span>
-        </div>
-    ''', unsafe_allow_html=True)
-    
-    if btn and temat:
-        lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
-        
-        for index, pojedynczy_temat in enumerate(lista_tematow):
-            with st.spinner(f'Processing Batch {index + 1}...'):
-                rok = datetime.now().year
-                t0 = Task(description=f"Find {rok} news on: '{pojedynczy_temat}'.", expected_output="Facts/URLs.", agent=researcher)
-                t1 = Task(description="Write LinkedIn post. Brand voice.", expected_output="Post text.", agent=copywriter)
-                t2 = Task(description="Midjourney prompt for this post.", expected_output="Prompt string.", agent=art_director)
-                
-                crew = Crew(agents=[researcher, copywriter, art_director], tasks=[t0, t1, t2])
-                crew.kickoff()
-                
-                post_text = getattr(t1.output, 'raw_output', str(t1.output))
-                visual_prompt = getattr(t2.output, 'raw_output', str(t2.output))
-                
-                save_to_history(pojedynczy_temat, f"{post_text}\n\nPrompt: {visual_prompt}")
-                
-                clean_post = post_text.replace('\n', '<br>')
-                
-                st.markdown(f'''
-                    <div class="result-card">
-                        <div style="font-weight: 800; color: #8237FF; font-size: 14px; letter-spacing: 1px; margin-bottom: 15px;">BATCH {index + 1} READY</div>
-                        <div style="color: #1A1A1A; font-size: 16px; margin-bottom: 25px; font-weight: 400;">{clean_post}</div>
-                        <div style="background: #F4F4F9; padding: 20px; border-radius: 12px; border-left: 4px solid #FF749F;">
-                            <strong style="color: #000; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">📸 Visual Prompt</strong><br>
-                            <span style="color: #444; font-size: 14px; font-style: italic;">{visual_prompt}</span>
-                        </div>
-                    </div>
-                ''', unsafe_allow_html=True)
-                
-                with st.expander("🔍 Sources, please!"):
-                    st.write(getattr(t0.output, 'raw_output', str(t0.output)))
