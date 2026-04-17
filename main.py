@@ -156,7 +156,6 @@ if check_password():
             # Pętla - Agenci pracują nad każdym tematem zupełnie osobno
             for index, pojedynczy_temat in enumerate(lista_tematow):
                 with st.spinner(f'Generuję post {index + 1} z {len(lista_tematow)}...'):
-                    # Zadanie 1: Research (Nowe)
                     # Zadanie 1: Research (Z wymuszonymi źródłami)
                     t0 = Task(
                         description=f"Search the web for the latest insights, news, and data on this topic: '{pojedynczy_temat}'. Extract the 3 most important facts. YOU MUST INCLUDE the exact URLs/links of your sources at the bottom of your notes.",
