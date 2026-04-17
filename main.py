@@ -153,6 +153,7 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 if not st.session_state.authenticated:
+    # USUNIĘTY HAK CSS! Streamlit sam ukryje pasek, bo na tym etapie nic w nim nie ma.
     st.markdown('<h1 class="main-title">Security <span style="font-family: \'Instrument Serif\'; font-style: italic; color: #FC64FF; font-size: 40px; letter-spacing: 8px;">Check</span></h1>', unsafe_allow_html=True)
     pin = st.text_input("Enter your access PIN:", type="password")
     if st.button("Enter Access"):
@@ -161,7 +162,7 @@ if not st.session_state.authenticated:
             st.rerun()
         else:
             st.error("Incorrect PIN.")
-    st.stop()
+    st.stop() # Tu zatrzymujemy kod. Pasek rysuje się dopiero poniżej.
 
 # --- 5. LOAD KEYS & TOOLS ---
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
@@ -186,8 +187,7 @@ scrape_tool = ScrapeWebsiteTool()
 kellton_brand_voice = """
 Identity: Kellton Europe, a trusted digital transformation partner for mid-to-large enterprises. We deliver enterprise-grade expertise with the heart and agility of a true partner. Our Message: The results you need. The partnership you want.
 Audience: Pragmatic, results-oriented senior leaders (CTO, CIO, CEO) who hate fluff and buzzwords.
-Be Casual: Write as you talk. Use contractions (it’s, we’ll, you’re). If it sounds stiff, rewrite it.
-Be Confident: Use strong, declarative sentences. Take a clear stance. Do not hedge with "might" or "perhaps".
+Be Casual: Write as you talk. Use contractions (it’s, we’ll, you’re). If it sounds stiff, rewrite it.Be Confident: Use strong, declarative sentences. Take a clear stance. Do not hedge with "might" or "perhaps".
 Active Voice Only: Say "We build apps," not "Apps are built by us".
 Lead with Benefits: Start with what the reader gets, not a list of features.
 Conversational Punctuation: Use a spaced en-dash ( – ) for pauses or emphasis – just like this. Start sentences with 'And' or 'But' if it helps the flow.
@@ -223,7 +223,7 @@ art_director = Agent(
 
 # --- 7. APP LAYOUT ---
 
-# PANCERNY PASEK BOCZNY - BEZ UKRYWANIA
+# PANCERNY PASEK BOCZNY
 with st.sidebar:
     st.markdown('<p class="section-label" style="font-size: 20px !important; margin-top: 20px;">📚 Archive</p>', unsafe_allow_html=True)
     hist_df = load_history()
