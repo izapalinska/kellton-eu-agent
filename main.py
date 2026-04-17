@@ -27,6 +27,7 @@ def load_history():
     return pd.DataFrame(columns=['Date', 'Topic/Notes', 'Generated Content'])
 
 # --- 3. CUSTOM CSS ---
+# --- 3. CUSTOM CSS (FULL REPAIRED VERSION) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&display=swap');
@@ -36,7 +37,7 @@ st.markdown("""
         background-color: #030303;
     }
 
-    /* ANIMOWANY TYTUŁ */
+    /* TYTUŁY */
     .main-title {
         font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 82px !important;
@@ -52,7 +53,6 @@ st.markdown("""
     }
     @keyframes shine { to { background-position: 200% center; } }
 
-    /* POPRAWIONY ODSTĘP PODTYTUŁU */
     .serif-akcent {
         font-family: 'Instrument Serif', serif;
         font-style: italic;
@@ -64,14 +64,42 @@ st.markdown("""
         margin-bottom: 4rem;
     }
 
-    /* SZKLANY SIDEBAR */
+    /* SIDEBAR - SZKLANY EFEKT */
     [data-testid="stSidebar"] {
         background: rgba(6, 5, 20, 0.8) !important;
         backdrop-filter: blur(12px);
         border-right: 1px solid rgba(255,255,255,0.05);
     }
 
-    /* NOWOCZESNA KARTA WYNIKÓW */
+    /* NAPRAWA STRZAŁKI SIDEBARU (UKRYWAMY TYLKO TŁO HEADEREM, NIE CAŁY HEADER) */
+    header {
+        background-color: transparent !important;
+    }
+    [data-testid="stHeader"] {
+        background: transparent !important;
+    }
+
+    /* PRZYCISK "GET TO WORK" - KOLORY I GLOW */
+    div[data-testid="stButton"] > button {
+        background: linear-gradient(90deg, #E31352 0%, #F86652 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 18px 30px !important;
+        font-weight: 800 !important;
+        text-transform: uppercase;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(227, 19, 82, 0.3) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    div[data-testid="stButton"] > button:hover {
+        transform: translateY(-2px) scale(1.01) !important;
+        box-shadow: 0 0 20px rgba(227, 19, 82, 0.6), 0 0 40px rgba(248, 102, 82, 0.2) !important;
+        color: white !important;
+    }
+
+    /* KARTA WYNIKÓW */
     .result-card {
         background: #0F0F12 !important;
         color: #EDEDED !important;
@@ -90,19 +118,20 @@ st.markdown("""
         margin-bottom: 20px;
     }
 
-    /* TABELE I INPUTY */
+    /* INPUTY I TABELE */
     [data-testid="stDataFrame"], [data-testid="stTable"] {
         border-radius: 15px;
         overflow: hidden;
         border: 1px solid rgba(167, 101, 255, 0.1);
     }
-    div[data-baseweb="textarea"] > div {
+    div[data-baseweb="textarea"] > div, div[data-baseweb="input"] > div {
         background-color: #0F0F11 !important;
         border: 1px solid #2A1F5C !important;
         border-radius: 16px !important;
     }
 
-    #MainMenu, footer, header {visibility: hidden;}
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
     </style>
     
     <svg width="0" height="0" style="position:absolute">
