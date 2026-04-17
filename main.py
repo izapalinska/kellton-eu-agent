@@ -12,7 +12,7 @@ try:
                 key, value = line.strip().split('=', 1)
                 os.environ[key] = value
 except FileNotFoundError:
-    st.error("Błąd: Nie znaleziono pliku .env.")
+    pass
 
 # --- Funkcje obsługi historii ---
 FILE_NAME = "historia_postow.csv"
