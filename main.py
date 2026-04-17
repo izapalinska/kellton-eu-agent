@@ -10,7 +10,23 @@ from tavily import TavilyClient
 # --- 1. PAGE CONFIG ---
 st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide")
 
-# --- 2. CUSTOM CSS (Kellton Luxe UI 4.0) ---
+# --- 2. HISTORY FUNCTIONS (Muszą być przed layoutem!) ---
+FILE_NAME = "post_history.csv"
+
+def save_to_history(topic, content):
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    df = pd.DataFrame([[now, topic, content]], columns=['Date', 'Topic/Notes', 'Generated Content'])
+    if not os.path.isfile(FILE_NAME):
+        df.to_csv(FILE_NAME, index=False, encoding='utf-8-sig')
+    else:
+        df.to_csv(FILE_NAME, mode='a', header=False, index=False, encoding='utf-8-sig')
+
+def load_history():
+    if os.path.isfile(FILE_NAME):
+        return pd.read_csv(FILE_NAME, encoding='utf-8-sig')
+    return pd.DataFrame(columns=['Date', 'Topic/Notes', 'Generated Content'])
+
+# --- 3. CUSTOM CSS (Luxe UI 4.1 - No Italic Labels) ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Instrument+Serif:ital@0;1&display=swap');
@@ -20,7 +36,6 @@ st.markdown("""
         background-color: #030303;
     }
 
-    /* Nagłówek główny - zacieśniony */
     .main-title {
         font-family: 'Inter', sans-serif;
         font-size: 82px !important;
@@ -41,17 +56,17 @@ st.markdown("""
         margin-bottom: 4rem;
     }
 
+    /* NAGŁÓWKI SEKCJI - Proste, nie kursywa */
     .section-label {
         font-family: 'Instrument Serif', serif;
-        font-style: italic;
-        font-size: 28px !important;
-        letter-spacing: 3px !important;
+        font-style: normal !important; /* Usunięty italic */
+        font-size: 32px !important;
+        letter-spacing: 2px !important;
         color: #49E1DD;
         margin-bottom: 1.5rem !important;
         display: block;
     }
 
-    /* Prawa kolumna - Gradientowy grafit */
     [data-testid="column"]:nth-of-type(2) {
         background: linear-gradient(160deg, #16161A 0%, #050505 100%) !important;
         border-left: 1px solid rgba(255,255,255,0.08) !important;
@@ -59,35 +74,28 @@ st.markdown("""
         min-height: 100vh;
     }
 
-    /* Pola tekstowe - KONIEC Z CZERWONYM FOCUSEM */
     .stTextArea textarea, .stTextInput input {
         background-color: #0F0F11 !important;
         border: 1px solid #2A1F5C !important;
         border-radius: 16px !important;
         color: #FFFFFF !important;
         padding: 20px !important;
-        transition: all 0.3s ease !important;
     }
     
     .stTextArea textarea:focus, .stTextInput input:focus {
         border-color: #FC64FF !important;
         box-shadow: 0 0 15px rgba(252, 100, 255, 0.4) !important;
-        outline: none !important;
     }
 
-    /* Przycisk */
     .stButton>button {
         background: linear-gradient(90deg, #452DA2 0%, #FC64FF 100%) !important;
         color: white !important;
-        border: none !important;
         border-radius: 12px !important;
         padding: 18px !important;
         font-weight: 800 !important;
         text-transform: uppercase;
-        letter-spacing: 2px;
     }
 
-    /* KARTA WYNIKU - Biała z gradientową ramką */
     .result-card {
         background: #FFFFFF !important;
         color: #1A1A1A !important;
@@ -112,7 +120,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. PIN LOGIC ---
+# --- 4. PIN LOGIC ---
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
@@ -126,22 +134,6 @@ if not st.session_state.authenticated:
         else:
             st.error("Incorrect PIN.")
     st.stop()
-
-# --- 4. HISTORY FUNCTIONS (Muszą być TU!) ---
-FILE_NAME = "post_history.csv"
-
-def save_to_history(topic, content):
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    df = pd.DataFrame([[now, topic, content]], columns=['Date', 'Topic/Notes', 'Generated Content'])
-    if not os.path.isfile(FILE_NAME):
-        df.to_csv(FILE_NAME, index=False, encoding='utf-8-sig')
-    else:
-        df.to_csv(FILE_NAME, mode='a', header=False, index=False, encoding='utf-8-sig')
-
-def load_history():
-    if os.path.isfile(FILE_NAME):
-        return pd.read_csv(FILE_NAME, encoding='utf-8-sig')
-    return pd.DataFrame(columns=['Date', 'Topic/Notes', 'Generated Content'])
 
 # --- 5. LOAD KEYS & TOOLS ---
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
@@ -164,10 +156,19 @@ scrape_tool = ScrapeWebsiteTool()
 
 # --- 6. AGENTS ---
 kellton_brand_voice = """
-Identity: Kellton Europe. Results-oriented, casual but sharp. 
-Style: Active voice, use contractions, no fluff.
-Banned: synergy, leverage, game-changing, revolutionary, utilize, delve, etc.
-Constraint: No "Not just X, but Y". Use spaced en-dash ( – ).
+Identity: Kellton Europe, a trusted digital transformation partner for mid-to-large enterprises. We deliver enterprise-grade expertise with the heart and agility of a true partner. Our Message: The results you need. The partnership you want.
+    Audience: Pragmatic, results-oriented senior leaders (CTO, CIO, CEO) who hate fluff and buzzwords.
+    Be Casual: Write as you talk. Use contractions (it’s, we’ll, you’re). If it sounds stiff, rewrite it.
+    Be Confident: Use strong, declarative sentences. Take a clear stance. Do not hedge with "might" or "perhaps".
+    Active Voice Only: Say "We build apps," not "Apps are built by us".
+    Lead with Benefits: Start with what the reader gets, not a list of features.
+    Conversational Punctuation: Use a spaced en-dash ( – ) for pauses or emphasis – just like this. Start sentences with 'And' or 'But' if it helps the flow.
+    Hooks and CTAs: Use strong hooks and engaging questions or CTAs.
+    Banned: NEVER use these words: Synergy, leverage (as a verb), paradigm shift, game-changing, revolutionary, utilize, actionable insights, heavy lifting, low-hanging fruit, circle back, touch base, embark, delve, plethora, multitude, testament to, cutting-edge, future-proof, robust, seamless, state-of-the-art.
+    Constraint: No "Not just X, but Y". Use spaced en-dash ( – ).
+    No AI-isms: Avoid "In the rapidly evolving world of..." or "delving into the intricacies of...". 
+    Strict Style Constraint: Never use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly.
+
 """
 
 researcher = Agent(
@@ -194,14 +195,15 @@ art_director = Agent(
 )
 
 # --- 7. APP LAYOUT ---
-# Pasek boczny
-st.sidebar.markdown('<p class="section-label" style="font-size: 24px !important;">📚 Archive</p>', unsafe_allow_html=True)
+
+# Pasek boczny (Archiwum)
+st.sidebar.markdown('<p class="section-label" style="font-size: 24px !important; font-style: normal !important;">📚 Archive</p>', unsafe_allow_html=True)
 hist_df = load_history()
 if not hist_df.empty:
     st.sidebar.dataframe(hist_df[['Date', 'Topic/Notes']].tail(5), use_container_width=True)
     st.sidebar.download_button("📥 DOWNLOAD CSV", data=hist_df.to_csv(index=False).encode('utf-8-sig'), file_name="kellton_plan.csv", mime="text/csv")
 
-# Nagłówek
+# Nagłówek główny
 st.markdown('<h1 class="main-title">KELLTON EUROPE</h1>', unsafe_allow_html=True)
 st.markdown('<span class="serif-akcent">Social Media Specialist</span>', unsafe_allow_html=True)
 
@@ -245,7 +247,6 @@ with col2:
                         </div>
                     </div>
                 ''', unsafe_allow_html=True)
-
+                
                 with st.expander("🔍 Sources, please!"):
-                    surowe_notatki = getattr(t0.output, 'raw_output', str(t0.output))
-                    st.write(surowe_notatki)
+                    st.write(getattr(t0.output, 'raw_output', str(t0.output)))
