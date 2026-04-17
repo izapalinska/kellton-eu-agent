@@ -4,3 +4,5 @@ langchain-openai
 streamlit
 pandas
 crewai-tools
+langchain-community
+duckduckgo-search
