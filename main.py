@@ -48,7 +48,7 @@ def check_password():
         pin = st.text_input("Wpisz swój PIN dostępu:", type="password")
         if st.button("Wejdź"):
             # Tutaj ustaw swój własny PIN
-            if pin == "1234": 
+            if pin == "4014": 
                 st.session_state.authenticated = True
                 st.rerun()
             else:
