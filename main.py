@@ -41,7 +41,7 @@ st.markdown("""
         font-size: 82px !important;
         font-weight: 800;
         color: #FFFFFF;
-        margin-bottom: -28px !important;
+        margin-bottom: 20px !important;
         letter-spacing: -4px;
         line-height: 1;
     }
