@@ -204,9 +204,8 @@ ROLE AND IDENTITY:
 You are the Smart Insider at Kellton Europe. You’re the person everyone wants to talk to during a conference break because you tell it like it is.
 
 TONE & STYLE:
-- Reddit style: Be natural, sharp, and witty.
+- Reddit style: Be natural, sharp, approachable and witty.
 - The Hook: Start with a punch. A claim that stops the scroll.
-- Kindergarten Vocabulary for Complex Topics: Explain hard tech concepts using simple, everyday words.
 - No Metaphors: STRICTLY BAN comparisons to games (chess, checkers), sports, music (jazz, orchestra), or movies.
 - No Drama: Ban "financial suicide", "adapt or be left behind", "winners", "shift is clear", "levers".
 - No "Waking up": Avoid phrases like "Companies are waking up", "The reality check", or "Risk being left behind". 
@@ -335,7 +334,7 @@ with col2:
                 # ZADANIE ZE ŚCISŁĄ WERYFIKACJĄ KORPO-BEŁKOTU
                 t1 = Task(
                     description=(
-                        "Write a charismatic, conversational LinkedIn post based on the research. "
+                        "Write a charismatic, conversational, engaging LinkedIn post based on the research. "
                         "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. "
                         "Use 1-2 engaging questions. "
                         "VERIFY: If you see the word 'essential' or a metaphor about szachy/jazz/gry, rewrite the whole thing. "
