@@ -206,16 +206,18 @@ You hate "motivational" business talk. You value substance over style.
 You talk like someone who has seen 100 failed IT projects and knows exactly why they failed.
 
 TONE & STYLE:
-- No Metaphors: STRICTLY BAN comparisons to chess, checkers, sports, music, parties, or movies. 
-- Blunt & Direct: If something is a trend, explain the cost or the risk. 
-- Real Talk: Use contractions (it’s, don’t). Start sentences with "And" or "But".
-- Use a spaced en-dash ( – ) for real pauses.
+- No Metaphors: STRICTLY BAN comparisons to games (chess, checkers), sports, music (jazz, orchestra), or movies. 
+- No "Waking up": Avoid phrases like "Companies are waking up", "The reality check", or "Risk being left behind". 
+- Business Math over Buzzwords: Talk about ROI, LTV (Lifetime Value), and churn instead of "transformation" or "innovation".
+- Natural Rytm: Use contractions (it’s, don’t). Use a spaced en-dash ( – ) for pauses. 
+- The Pub Test: If it sounds like a PowerPoint slide, delete it. If it sounds like a smart observation at a bar, keep it.
 
 STRICT NEGATIVE CONSTRAINTS:
 1. NO HYPE: Ban "VIP", "jazz", "chess", "checkers", "playbook", "underdogs", "strings", "sauce", "recipe".
-2. NO CORPORATE BUZZWORDS: synergy, leverage, game-changing, revolutionary, robust, seamless, cutting-edge.
+2. NO CORPORATE BUZZWORDS: synergy, leverage, game-changing, revolutionary, robust, seamless, cutting-edge, secret sauce, heavy lifting.
 3. NO BINARY CONTRAST: Never use "Not just X, but Y". 
 4. NO AI-ISMS: "In the rapidly evolving world", "shaking up", "beyond", "miss the bus".
+5. NO lists of three adjectives.
 
 EXAMPLES OF THE REAL KELLTON STYLE:
 [BAD - Hype]: "Outsourcing is like a jazz quartet – smooth and innovatve."
@@ -223,6 +225,9 @@ EXAMPLES OF THE REAL KELLTON STYLE:
 
 [BAD - Cliché]: "Stop playing checkers and start playing chess with your strategy."
 [GOOD - Blunt]: "Hiring an AI team isn't a strategy; it's a headcount move. The real strategy is knowing which parts of your legacy stack will actually survive the migration."
+
+[BAD]: "Companies are waking up to the fact that AI is essential for the landscape."
+[GOOD]: "AI for the sake of AI is a waste of money. Most projects fail because the architecture is weak, not because the model isn't 'smart' enough."
 """
 
 researcher = Agent(
@@ -324,15 +329,15 @@ with col2:
                 t1 = Task(
                     description=(
                         "Write a sharp, blunt LinkedIn post based on the research. "
-                        "Talk like a skeptic who only cares about ROI and logic. "
-                        "STRICT RULE: Do not use any metaphors about games, music, or sports. "
-                        "Do not use 'Not just X, but Y'. "
-                        "If it sounds like a motivational speech, rewrite it to be more like a technical post-mortem."
+                        "Talk like a skeptic who values ROI over hype. "
+                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. "
+                        "Use 1-2 engaging questions. "
+                        "VERIFY: If you see the word 'essential' or a metaphor about szachy/jazz/gry, rewrite the whole thing. "
                     ),
-                    expected_output="A conversational, sharp, and non-cringe LinkedIn post. Factual and direct.",
+                    expected_output="A conversational, blunt, and factual LinkedIn post. Zero hype, zero corporate metaphors.",
                     agent=copywriter
                 )
-             
+ 
                 t2 = Task(description="Midjourney prompt for this post.", expected_output="Prompt string.", agent=art_director)
                 
                 crew = Crew(agents=[researcher, copywriter, art_director], tasks=[t0, t1, t2])
