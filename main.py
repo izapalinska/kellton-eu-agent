@@ -249,12 +249,12 @@ st.markdown('<span class="serif-akcent">Social Media Specialist</span>', unsafe_
 col1, col2 = st.columns([1, 1.4], gap="large")
 
 with col1:
-    st.markdown('<p style="font-weight: 700; font-size: 24px; color: #A765FF;">What are we writing about today?</p>', unsafe_allow_html=True)
-    temat = st.text_area("", height=250, placeholder="Np. Strategia AI w designie --- Trendy UX 2026", label_visibility="collapsed")
+    st.markdown('<p style="font-weight: 700; font-size: 24px; color: #A765FF;">WHAT ARE WE WRITING TODAY?</p>', unsafe_allow_html=True)
+    temat = st.text_area("", height=250, placeholder="Use any input language you want and separate each idea with ---", label_visibility="collapsed")
     btn = st.button("GET TO WORK, BRO")
 
 with col2:
-    st.markdown('<p style="font-weight: 700; font-size: 24px; color: #A765FF;">Result</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-weight: 700; font-size: 24px; color: #A765FF;">RESULT</p>', unsafe_allow_html=True)
     if btn and temat:
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
         for index, pojedynczy_temat in enumerate(lista_tematow):
@@ -293,3 +293,7 @@ with col2:
                         </div>
                     </div>
                 ''', unsafe_allow_html=True)
+                
+                with st.expander("🔍 Sources, please!"):
+                    st.write(getattr(t0.output, 'raw_output', str(t0.output)))
+
