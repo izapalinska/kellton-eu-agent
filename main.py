@@ -4,8 +4,7 @@ import pandas as pd
 from datetime import datetime
 from crewai import Agent, Task, Crew
 from crewai_tools import ScrapeWebsiteTool
-from crewai.tools import BaseTool
-from duckduckgo_search import DDGS
+from langchain_community.tools.tavily_search import TavilySearchResults
 
 # --- PAGE CONFIG ---
 st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide")
@@ -99,24 +98,11 @@ if check_password():
     """
     
     scrape_tool = ScrapeWebsiteTool()
-
+    
     # --- TOOLS ---
-    class DuckDuckGoSearchTool(BaseTool):
-        name: str = "DuckDuckGo Web Search"
-        description: str = "Search the web for the latest information, news, and data on a given topic."
+    os.environ["TAVILY_API_KEY"] = st.secrets["TAVILY_API_KEY"]
+    search_tool = TavilySearchResults(max_results=4)
 
-        def _run(self, search_query: str) -> str:
-            try:
-                with DDGS() as ddgs:
-                    # Pobieramy 4 najlepsze wyniki z sieci
-                    results = list(ddgs.text(search_query, max_results=4))
-                    if results:
-                        return "\n\n".join([f"Link: {r.get('href', '')}\nSnippet: {r.get('body', '')}" for r in results])
-                    return "No results found."
-            except Exception as e:
-                return f"Search failed: {str(e)}"
-
-    search_tool = DuckDuckGoSearchTool()
 
     # --- NOWY AGENT: RESEARCHER ---
     researcher = Agent(
