@@ -132,7 +132,7 @@ if check_password():
         st.subheader("Result")
         if btn and temat:
             # Rozdzielamy tekst z okienka na osobne linijki (odrzucamy puste)
-            lista_tematow = [t.strip() for t in temat.split('\n') if t.strip()]
+            lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
             
             st.write(f"Zaczynam produkcję: {len(lista_tematow)} postów w kolejce. 🚀")
             
