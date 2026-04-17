@@ -101,7 +101,7 @@ if check_password():
         role='Lead Content Strategist',
         goal='Write sharp LinkedIn posts that lead with a benefit. Focus on thought leadership and trust for B2B decision-makers. Use a confident, conversational tone.',
         backstory=kellton_brand_voice,
-        verbose=True
+        verbose=True,
         tools=[scrape_tool]
     )
 
