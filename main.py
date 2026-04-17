@@ -178,12 +178,12 @@ if check_password():
                     )
                     
                     # Zmiana: Crew musi teraz uwzględniać 3 Agentów i 3 Zadania w odpowiedniej kolejności!
-                 crew = Crew(agents=[researcher, copywriter, art_director], tasks=[t0, t1, t2])
+                    crew = Crew(agents=[researcher, copywriter, art_director], tasks=[t0, t1, t2])
                     
                     wynik = str(crew.kickoff())
                     save_to_history(pojedynczy_temat, wynik)
                     
-                    st.success(f"Batch is ready!")
+                    st.success("Batch is ready!")
                     st.info(wynik)
                     
                     # NOWOŚĆ: Rozwijany panel ze źródłami
