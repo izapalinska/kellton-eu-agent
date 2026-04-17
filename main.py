@@ -8,7 +8,7 @@ from crewai.tools import BaseTool
 from tavily import TavilyClient
 
 # --- 1. PAGE CONFIG ---
-st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide")
+st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide", initial_sidebar_state="expanded")
 
 # --- 2. HISTORY FUNCTIONS ---
 FILE_NAME = "post_history.csv"
@@ -56,7 +56,6 @@ st.markdown("""
         margin-bottom: 4rem;
     }
 
-    /* NAGŁÓWKI SEKCJI */
     .section-label {
         font-family: 'Inter', sans-serif !important;
         font-weight: 700 !important;
@@ -74,17 +73,25 @@ st.markdown("""
         min-height: 100vh;
     }
 
-    /* USUWANIE CZERWONEGO FOCUSU */
-    div[data-baseweb="input"] > div, div[data-baseweb="textarea"] > div {
+    /* OSTATECZNY KILLER CZERWONEGO FOCUSU STREAMLITA */
+    div[data-baseweb="input"] > div, 
+    div[data-baseweb="textarea"] > div,
+    div[data-baseweb="base-input"] {
         background-color: #0F0F11 !important;
         border: 1px solid #2A1F5C !important;
         border-radius: 16px !important;
-        transition: all 0.3s ease !important;
     }
-    div[data-baseweb="input"]:focus-within > div, div[data-baseweb="textarea"]:focus-within > div {
+    
+    div[data-baseweb="input"]:focus-within > div, 
+    div[data-baseweb="textarea"]:focus-within > div,
+    div[data-baseweb="base-input"]:focus-within,
+    .stTextArea textarea:focus, 
+    .stTextInput input:focus {
         border-color: #FC64FF !important;
-        box-shadow: 0 0 15px rgba(252, 100, 255, 0.4) !important;
+        box-shadow: 0 0 0 1px #FC64FF, 0 0 15px rgba(252, 100, 255, 0.4) !important;
+        outline: none !important;
     }
+
     input, textarea {
         color: #FFFFFF !important;
         caret-color: #FC64FF !important;
@@ -112,7 +119,6 @@ st.markdown("""
         display: none !important;
     }
 
-    /* BIAŁE KARTY WYNIKÓW */
     .result-card {
         background: #FFFFFF !important;
         color: #1A1A1A !important;
@@ -131,25 +137,22 @@ st.markdown("""
         z-index: -1;
         border-radius: 26px;
     }
-
-    /* STYLE ARCHIWUM W SIDEBARZE */
+    
+    /* SIDEBAR STYLING */
     [data-testid="stSidebar"] {
         background-color: #060514 !important;
         border-right: 1px solid rgba(255,255,255,0.05);
     }
-
+    
     header, footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
-# --- 4. PIN LOGIC & UKRYWANIE SIDEBARA ---
+# --- 4. PIN LOGIC ---
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 if not st.session_state.authenticated:
-    # Ten fragment ukrywa cały sidebar na ekranie PINu
-    st.markdown('<style>[data-testid="stSidebar"] {display: none !important;}</style>', unsafe_allow_html=True)
-    
     st.markdown('<h1 class="main-title">Security <span style="font-family: \'Instrument Serif\'; font-style: italic; color: #FC64FF; font-size: 40px; letter-spacing: 8px;">Check</span></h1>', unsafe_allow_html=True)
     pin = st.text_input("Enter your access PIN:", type="password")
     if st.button("Enter Access"):
@@ -181,19 +184,18 @@ scrape_tool = ScrapeWebsiteTool()
 
 # --- 6. AGENTS ---
 kellton_brand_voice = """
-    Identity: Kellton Europe, a trusted digital transformation partner for mid-to-large enterprises. We deliver enterprise-grade expertise with the heart and agility of a true partner. Our Message: The results you need. The partnership you want.
-    Audience: Pragmatic, results-oriented senior leaders (CTO, CIO, CEO) who hate fluff and buzzwords.
-    Be Casual: Write as you talk. Use contractions (it’s, we’ll, you’re). If it sounds stiff, rewrite it.
-    Be Confident: Use strong, declarative sentences. Take a clear stance. Do not hedge with "might" or "perhaps".
-    Active Voice Only: Say "We build apps," not "Apps are built by us".
-    Lead with Benefits: Start with what the reader gets, not a list of features.
-    Conversational Punctuation: Use a spaced en-dash ( – ) for pauses or emphasis – just like this. Start sentences with 'And' or 'But' if it helps the flow.
-    Hooks and CTAs: Use strong hooks and engaging questions or CTAs.
-    Banned: NEVER use these words: Synergy, leverage (as a verb), paradigm shift, game-changing, revolutionary, utilize, actionable insights, heavy lifting, low-hanging fruit, circle back, touch base, embark, delve, plethora, multitude, testament to, cutting-edge, future-proof, robust, seamless, state-of-the-art.
-    Constraint: No "Not just X, but Y". Use spaced en-dash ( – ).
-    No AI-isms: Avoid "In the rapidly evolving world of..." or "delving into the intricacies of...". 
-    Strict Style Constraint: Never use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly
-
+Identity: Kellton Europe, a trusted digital transformation partner for mid-to-large enterprises. We deliver enterprise-grade expertise with the heart and agility of a true partner. Our Message: The results you need. The partnership you want.
+Audience: Pragmatic, results-oriented senior leaders (CTO, CIO, CEO) who hate fluff and buzzwords.
+Be Casual: Write as you talk. Use contractions (it’s, we’ll, you’re). If it sounds stiff, rewrite it.
+Be Confident: Use strong, declarative sentences. Take a clear stance. Do not hedge with "might" or "perhaps".
+Active Voice Only: Say "We build apps," not "Apps are built by us".
+Lead with Benefits: Start with what the reader gets, not a list of features.
+Conversational Punctuation: Use a spaced en-dash ( – ) for pauses or emphasis – just like this. Start sentences with 'And' or 'But' if it helps the flow.
+Hooks and CTAs: Use strong hooks and engaging questions or CTAs.
+Banned: NEVER use these words: Synergy, leverage (as a verb), paradigm shift, game-changing, revolutionary, utilize, actionable insights, heavy lifting, low-hanging fruit, circle back, touch base, embark, delve, plethora, multitude, testament to, cutting-edge, future-proof, robust, seamless, state-of-the-art.
+Constraint: No "Not just X, but Y". Use spaced en-dash ( – ).
+No AI-isms: Avoid "In the rapidly evolving world of..." or "delving into the intricacies of...". 
+Strict Style Constraint: Never use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly
 """
 
 researcher = Agent(
@@ -221,7 +223,7 @@ art_director = Agent(
 
 # --- 7. APP LAYOUT ---
 
-# SIDEBAR (Pokazuje się tylko po wpisaniu PINu)
+# PANCERNY PASEK BOCZNY - BEZ UKRYWANIA
 with st.sidebar:
     st.markdown('<p class="section-label" style="font-size: 20px !important; margin-top: 20px;">📚 Archive</p>', unsafe_allow_html=True)
     hist_df = load_history()
@@ -269,7 +271,6 @@ with col2:
                 post_text = getattr(t1.output, 'raw_output', str(t1.output))
                 visual_prompt = getattr(t2.output, 'raw_output', str(t2.output))
                 
-                # Zapisujemy do CSV tuż po wygenerowaniu
                 save_to_history(pojedynczy_temat, f"{post_text}\n\nPrompt: {visual_prompt}")
                 
                 clean_post = post_text.replace('\n', '<br>')
