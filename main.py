@@ -8,7 +8,7 @@ from crewai.tools import BaseTool
 from tavily import TavilyClient
 
 # --- 1. PAGE CONFIG ---
-st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="Kellton Content Engine", page_icon="⚡", layout="wide")
 
 # --- 2. HISTORY FUNCTIONS ---
 FILE_NAME = "post_history.csv"
@@ -56,7 +56,7 @@ st.markdown("""
         margin-bottom: 4rem;
     }
 
-    /* NAGŁÓWKI SEKCJI - Taki sam Inter jak główny tytuł */
+    /* NAGŁÓWKI SEKCJI */
     .section-label {
         font-family: 'Inter', sans-serif !important;
         font-weight: 700 !important;
@@ -74,7 +74,7 @@ st.markdown("""
         min-height: 100vh;
     }
 
-    /* OSTATECZNE USUWANIE CZERWONEGO FOCUSU STREAMLITA */
+    /* USUWANIE CZERWONEGO FOCUSU */
     div[data-baseweb="input"] > div, div[data-baseweb="textarea"] > div {
         background-color: #0F0F11 !important;
         border: 1px solid #2A1F5C !important;
@@ -90,7 +90,7 @@ st.markdown("""
         caret-color: #FC64FF !important;
     }
 
-    /* NAPRAWA BUTTONÓW (Brak różowej kreski) */
+    /* BUTTON Z HOVEREM I CIENIEM */
     .stButton>button {
         background: linear-gradient(90deg, #452DA2 0%, #FC64FF 100%) !important;
         color: white !important;
@@ -99,13 +99,20 @@ st.markdown("""
         padding: 18px !important;
         font-weight: 800 !important;
         text-transform: uppercase;
-        box-shadow: 0 4px 15px rgba(252, 100, 255, 0.2) !important;
+        box-shadow: 0 4px 15px rgba(69, 45, 162, 0.3) !important;
+        transition: all 0.3s ease !important;
     }
-    /* To ta linijka zabija domyślną streamlitową, różową ramkę przed buttonem! */
+    
+    .stButton>button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 10px 25px rgba(252, 100, 255, 0.6) !important;
+    }
+
     .stButton>button::before, .stButton>button::after {
         display: none !important;
     }
 
+    /* BIAŁE KARTY WYNIKÓW */
     .result-card {
         background: #FFFFFF !important;
         color: #1A1A1A !important;
@@ -125,16 +132,24 @@ st.markdown("""
         border-radius: 26px;
     }
 
+    /* STYLE ARCHIWUM W SIDEBARZE */
+    [data-testid="stSidebar"] {
+        background-color: #060514 !important;
+        border-right: 1px solid rgba(255,255,255,0.05);
+    }
+
     header, footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
-# --- 4. PIN LOGIC ---
+# --- 4. PIN LOGIC & UKRYWANIE SIDEBARA ---
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 if not st.session_state.authenticated:
-    # Check ma teraz 8px letter-spacing, jest bardzo szeroki i elegancki
+    # Ten fragment ukrywa cały sidebar na ekranie PINu
+    st.markdown('<style>[data-testid="stSidebar"] {display: none !important;}</style>', unsafe_allow_html=True)
+    
     st.markdown('<h1 class="main-title">Security <span style="font-family: \'Instrument Serif\'; font-style: italic; color: #FC64FF; font-size: 40px; letter-spacing: 8px;">Check</span></h1>', unsafe_allow_html=True)
     pin = st.text_input("Enter your access PIN:", type="password")
     if st.button("Enter Access"):
@@ -178,6 +193,7 @@ kellton_brand_voice = """
     Constraint: No "Not just X, but Y". Use spaced en-dash ( – ).
     No AI-isms: Avoid "In the rapidly evolving world of..." or "delving into the intricacies of...". 
     Strict Style Constraint: Never use the "Not just X, but Y" or "It's not only about X, it's about Y" framing. Avoid any rhetorical device that tries to create a false contrast or "elevate" a concept by dismissing a simpler version of it. State facts directly
+
 """
 
 researcher = Agent(
@@ -205,13 +221,25 @@ art_director = Agent(
 
 # --- 7. APP LAYOUT ---
 
-# Pasek boczny jest teraz wymuszony ZAWSZE.
-st.sidebar.markdown('<p class="section-label" style="font-size: 20px !important;">📚 Archive</p>', unsafe_allow_html=True)
-hist_df = load_history()
-# Wyświetlamy tabelę zawsze, nawet jak jeszcze nie masz żadnych wyników
-st.sidebar.dataframe(hist_df[['Date', 'Topic/Notes']].tail(5) if not hist_df.empty else hist_df, use_container_width=True)
-st.sidebar.download_button("📥 DOWNLOAD CSV", data=hist_df.to_csv(index=False).encode('utf-8-sig'), file_name="kellton_plan.csv", mime="text/csv")
+# SIDEBAR (Pokazuje się tylko po wpisaniu PINu)
+with st.sidebar:
+    st.markdown('<p class="section-label" style="font-size: 20px !important; margin-top: 20px;">📚 Archive</p>', unsafe_allow_html=True)
+    hist_df = load_history()
+    
+    if not hist_df.empty:
+        st.dataframe(hist_df[['Date', 'Topic/Notes']].tail(5), use_container_width=True)
+    else:
+        st.markdown("<p style='color: #888; font-size: 14px;'>Waiting for your first post...</p>", unsafe_allow_html=True)
+        
+    st.download_button(
+        label="📥 DOWNLOAD CSV", 
+        data=hist_df.to_csv(index=False).encode('utf-8-sig'), 
+        file_name="kellton_plan.csv", 
+        mime="text/csv",
+        use_container_width=True
+    )
 
+# WIDOK GŁÓWNY
 st.markdown('<h1 class="main-title">KELLTON EUROPE</h1>', unsafe_allow_html=True)
 st.markdown('<span class="serif-akcent">Social Media Specialist</span>', unsafe_allow_html=True)
 
@@ -241,6 +269,7 @@ with col2:
                 post_text = getattr(t1.output, 'raw_output', str(t1.output))
                 visual_prompt = getattr(t2.output, 'raw_output', str(t2.output))
                 
+                # Zapisujemy do CSV tuż po wygenerowaniu
                 save_to_history(pojedynczy_temat, f"{post_text}\n\nPrompt: {visual_prompt}")
                 
                 clean_post = post_text.replace('\n', '<br>')
