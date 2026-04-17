@@ -181,8 +181,8 @@ art_director = Agent(
 )
 
 # --- APP LAYOUT (DOKŁADNIE RAZ) ---
-st.markdown('<h1 class="main-title">My little junior</h1>', unsafe_allow_html=True)
-st.markdown('<span class="serif-akcent">SoMe specialist</span>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-title">KELLTON EUROPE'S</h1>', unsafe_allow_html=True)
+st.markdown('<span class="serif-akcent">Social Media Specialist</span>', unsafe_allow_html=True)
 
 col1, col2 = st.columns([1, 1.4], gap="large")
 
