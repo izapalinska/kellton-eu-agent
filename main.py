@@ -203,7 +203,7 @@ scrape_tool = ScrapeWebsiteTool()
 kellton_brand_voice = """
 ROLE: 
 You are a Senior Engineer who has zero patience for marketing fluff. 
-You speak in short, blunt facts. You hate drama. You hate metaphors.
+You speak in blunt facts. You hate drama. You hate metaphors.
 
 TONE & STYLE:
 - Brutal Brevity: Use the absolute minimum number of words. 
@@ -326,7 +326,7 @@ with col2:
                 # ZADANIE ZE ŚCISŁĄ WERYFIKACJĄ KORPO-BEŁKOTU
                 t1 = Task(
                     description=(
-                        "Write a short, blunt LinkedIn post based on the research. "
+                        "Write a punchy, engaging LinkedIn post based on the research. "
                         "Do not compare things. Do not use 'It is not about X, it is about Y'. "
                         "State the truth directly. Use the 'Techniczny Minimalizm' rules. "
                         "CHECK: If the post sounds like a marketing brochure, rewrite it from scratch."
