@@ -248,12 +248,12 @@ st.markdown('<span class="serif-akcent">Social Media Specialist</span>', unsafe_
 col1, col2 = st.columns([1, 1.4], gap="large")
 
 with col1:
-    st.markdown('<p class="section-label">What are we writing about today?</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-label">WHAT ARE WE WRITING ABOUT?</p>', unsafe_allow_html=True)
     temat = st.text_area("", height=300, placeholder="Np. Strategia AI w designie --- Trendy UX 2026", label_visibility="collapsed")
     btn = st.button("GET TO WORK, BRO")
 
 with col2:
-    st.markdown('<p class="section-label">Result</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-label">RESULT</p>', unsafe_allow_html=True)
     
     if btn and temat:
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
