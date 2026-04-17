@@ -249,7 +249,7 @@ copywriter = Agent(
     goal='Write sharp LinkedIn posts based strictly on research.',
     backstory=kellton_brand_voice,
     verbose=True,
-    tools=[scrape_tool]
+    tools=[scrape_tool],
     llm=zimny_llm
 )
 
