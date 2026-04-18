@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 import pandas as pd
+import streamlit.components.v1 as components
 from datetime import datetime
 from crewai import Agent, Task, Crew
 from crewai_tools import ScrapeWebsiteTool
@@ -343,47 +344,70 @@ with col2:
                 visual_prompt = getattr(t2.output, 'raw_output', str(t2.output))
                 save_to_history(pojedynczy_temat, f"{post_text}\n\nPrompt: {visual_prompt}")
                 
-                # Unikalne ID dla każdego batcha, żeby JS wiedział co kopiować
-                post_id = f"post_{index}"
-                prompt_id = f"prompt_{index}"
 
-                # Funkcję w JS do kopiowania 
-                copy_js = """
-                <script>
-                function copyToClipboard(elementId) {
-                    var text = document.getElementById(elementId).innerText;
-                    navigator.clipboard.writeText(text).then(function() {
-                        alert('Skopiowano do schowka!');
-                    }, function(err) {
-                        console.error('Błąd kopiowania: ', err);
-                    });
-                }
-                </script>
-                """
-
-                # Ładna karta a nie jakieś gunwo
-                st.markdown(copy_js + f'''
-                    <div class="result-card" style="position: relative;">
+               # Generujemy bezpieczny HTML z wbudowanym JS
+                html_code = f"""
+                <div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #FAFAFA; background: transparent;">
+                    <div style="border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 20px; background: rgba(25, 25, 28, 0.8);">
+                        
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <span style="font-weight: 800; color: #A765FF; font-size: 14px;">🚀 BATCH {index + 1}</span>
-                            <button onclick="copyToClipboard('{post_id}')" style="background: #A765FF; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 11px; font-weight: bold;">📋 KOPIUJ POST</button>
+                            <span style="font-weight: 800; color: #A765FF; font-size: 14px;">BATCH {index + 1}</span>
+                            <button id="btn-post-{index}" onclick="copyToClipboard('post-text-{index}', 'btn-post-{index}')" style="background: #A765FF; color: white; border: none; border-radius: 5px; padding: 6px 12px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.3s;">📋 KOPIUJ POST</button>
                         </div>
                         
-                        <div id="{post_id}" style="line-height: 1.6; color: white; font-family: sans-serif;">
+                        <div id="post-text-{index}" style="line-height: 1.6; font-size: 14px; margin-bottom: 25px;">
                             {post_text.replace(chr(10), '<br>')}
                         </div>
 
-                        <div style="margin-top: 25px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid #FF66B2; position: relative;">
+                        <div style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid #FF66B2;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <small style="color: #FF66B2; font-weight: bold;">🎨 VISUAL DESIGN PROMPT:</small>
-                                <button onclick="copyToClipboard('{prompt_id}')" style="background: #FF66B2; color: white; border: none; border-radius: 5px; padding: 3px 8px; cursor: pointer; font-size: 10px; font-weight: bold;">📋 KOPIUJ PROMPT</button>
+                                <small style="color: #FF66B2; font-weight: bold;">VISUAL DESIGN PROMPT:</small>
+                                <button id="btn-prompt-{index}" onclick="copyToClipboard('prompt-text-{index}', 'btn-prompt-{index}')" style="background: #FF66B2; color: white; border: none; border-radius: 5px; padding: 4px 10px; cursor: pointer; font-size: 10px; font-weight: bold; transition: 0.3s;">📋 KOPIUJ PROMPT</button>
                             </div>
-                            <div id="{prompt_id}" style="font-style: italic; font-size: 13px; color: #eee;">
+                            <div id="prompt-text-{index}" style="font-style: italic; font-size: 13px; color: #eee;">
                                 {visual_prompt}
                             </div>
                         </div>
+
                     </div>
-                ''', unsafe_allow_html=True)
+
+                    <script>
+                        function copyToClipboard(elementId, buttonId) {{
+                            // Pobieranie tekstu (zamiana <br> z powrotem na nowe linie, żeby ładnie się wklejało)
+                            var htmlContent = document.getElementById(elementId).innerHTML;
+                            var copyText = htmlContent.replace(/<br\\s*\\/?>/gi, "\\n").replace(/<[^>]*>?/gm, '');
+                            
+                            // Animacja przycisku
+                            var btn = document.getElementById(buttonId);
+                            var originalText = btn.innerText;
+                            btn.innerText = "COPIED";
+                            btn.style.opacity = "0.8";
+                            setTimeout(function() {{
+                                btn.innerText = originalText;
+                                btn.style.opacity = "1";
+                            }}, 2000);
+
+                            // Bezpieczne kopiowanie do schowka
+                            var textArea = document.createElement("textarea");
+                            textArea.value = copyText.trim();
+                            textArea.style.position = "fixed";
+                            textArea.style.left = "-9999px";
+                            document.body.appendChild(textArea);
+                            textArea.focus();
+                            textArea.select();
+                            try {{
+                                document.execCommand('copy');
+                            }} catch (err) {{
+                                console.error('Kopiowanie nie powiodło się', err);
+                            }}
+                            document.body.removeChild(textArea);
+                        }}
+                    </script>
+                </div>
+                """
+                
+                # Wyświetlamy jako wyizolowany komponent (550px wysokości powinno starczyć, scrolling zapobiega ucięciu)
+                components.html(html_code, height=550, scrolling=True)
                 
                 st.markdown("<br>", unsafe_allow_html=True)
                 
