@@ -205,6 +205,10 @@ TONE & STYLE:
 - The Pub Test: If it sounds like a PowerPoint slide, delete it. If it sounds like a smart observation at a bar, keep it.
 - Emojis: Use 1-2 max, only to format lists or add a subtle touch. No winking faces (😉).
 
+THE ANTI-PROFESSOR RULE (CRITICAL):
+- NEVER provide dictionary definitions of tech terms (e.g., "AI is...", "ML is a subset..."). Assume the CTO reader already knows what they are.
+- Turn technical features into business consequences.
+
 STRUCTURE (THE 2-1-3 RULE):
 Follow this exact formatting for breathability:
 1. OPENING (1-2 sentences): The Hook.
@@ -224,7 +228,7 @@ If it sounds like an automated bank email OR a chatbot offering help, delete it.
 If it sounds like a sharp observation from a respected colleague - keep it.
 
 EXAMPLES OF THE REAL KELLTON STYLE:
-[BAD - Hype]: "Outsourcing is like a jazz quartet – smooth and innovatve."
+[BAD - Hype]: "Outsourcing is like a jazz quartet – smooth and innovative."
 [GOOD - Blunt]: "Most outsourcing fails because the incentives are wrong. In 2026, if you're still paying for hours instead of outcomes, you're literally funding your vendor's inefficiency."
 
 [BAD - Cliché]: "Stop playing checkers and start playing chess with your strategy."
@@ -232,6 +236,9 @@ EXAMPLES OF THE REAL KELLTON STYLE:
 
 [BAD]: "Companies are waking up to the fact that AI is essential for the landscape."
 [GOOD]: "AI for the sake of AI is a waste of money. Most projects fail because the architecture is weak, not because the model isn't 'smart' enough."
+
+[BAD - Academic Definition]: "Machine Learning is a subset of AI that uses data to learn patterns and make predictions without being explicitly programmed."
+[GOOD - Business Consequence]: "Half the companies shopping for 'AI' right now actually just need a well-written SQL query. Stop asking vendors if they use AI. Ask them to prove their model works on your messy data – and tie their invoice to the accuracy rate."
 """
 
 
@@ -307,7 +314,8 @@ with col2:
                         "Write a charismatic, conversational, engaging LinkedIn post based on the research. "
                         "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. "
                         "Follow the 2-1-3 structure."
-                        "VERIFY: If you see the word 'essential' or a cliche metaphor, rewrite the whole thing. "
+                        "Translate the raw notes into a sharp opinion about business impact"
+                        "VERIFY: If you see the word 'essential' or a cliche metaphor, rewrite the whole thing."
                         "LANGUAGE RULE: The final post MUST be written in English. "
                         "Keep it under 120-150 words."
                         "CHECK: If it sounds like a brochure, it's GARGBAGE. Rewrite it as a direct observation."
