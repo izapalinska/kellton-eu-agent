@@ -334,16 +334,23 @@ with col2:
                 visual_prompt = getattr(t2.output, 'raw_output', str(t2.output))
                 save_to_history(pojedynczy_temat, f"{post_text}\n\nPrompt: {visual_prompt}")
                 
+                # Nagłówek batcha
                 st.markdown(f'''
-                    <div class="result-card">
-                        <div style="font-weight: 800; color: #A765FF; font-size: 12px; margin-bottom: 10px;">BATCH {index + 1}</div>
-                        <div style="line-height: 1.6;">{post_text.replace(chr(10), '<br>')}</div>
-                        <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid #FF66B2;">
-                            <small style="color: #FF66B2;">VISUAL DESIGN PROMPT:</small><br>
-                            <i style="font-size: 13px;">{visual_prompt}</i>
-                        </div>
+                    <div style="font-weight: 800; color: #A765FF; font-size: 14px; margin-top: 20px; margin-bottom: 5px;">
+                        BATCH {index + 1}
                     </div>
                 ''', unsafe_allow_html=True)
+                
+                # Treść posta z przyciskiem kopiowania
+                st.caption("COPY:")
+                st.code(post_text, language="markdown")
+                
+                # Prompt wizualny z przyciskiem kopiowania
+                st.caption("VISUAL DESIGN PROMPT:")
+                st.code(visual_prompt, language="markdown")
+                
+                # Opcjonalny odstęp między kolejnymi batchami
+                st.divider()
                 
                 with st.expander("🔍 Sources, please!"):
                     st.write(getattr(t0.output, 'raw_output', str(t0.output)))
