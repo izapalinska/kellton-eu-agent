@@ -6,14 +6,22 @@
 ## The vision
 Modern marketing demands high-frequency, high-quality content, but AI-generated text often feels corporate and hollow (and even more cringe than my beloved dad jokes). I built the **Kellton EU Social Media Assistant** to bridge this gap. It's a virtual squad that enforces strict brand-voice constraints and integrates real-time market data to ensure every post is grounded in current reality.
 
+![Main screen](assets/mainscreen.png)
+
 ## 🧠 The solution (How it works)
 The system uses an **Agentic Workflow**, where specialized AI workers collaborate on a single task to ensure depth and accuracy.
 
 ### 🔄 The pipeline:
 1.  **The Senior Researcher:** Takes a raw topic and uses **Tavily Web Search** to find real-time data and news. No AI hallucinations — only facts.
-2.  **The Lead Strategist:** Receives the research and applies the **Kellton Brand Voice**. It uses Negative Constraints (a LOT of them XD) to surgically remove corporate buzzwords (no "synergy," no "chess/jazz" metaphors, no classic "It's not... it's..." BS).
-3.  **The Art Director:** Analyzes the final copy and generates a high-quality **Nano Banana** prompt to ensure the visual style matches the brand's aesthetic.
-4.  **The Content Vault:** All generated content is automatically logged into a persistent CSV database for historical tracking.
+
+[Research](assets/sources.png)
+
+3.  **The Lead Strategist:** Receives the research and applies the **Kellton Brand Voice**. It uses Negative Constraints (a LOT of them XD) to surgically remove corporate buzzwords (no "synergy," no "chess/jazz" metaphors, no classic "It's not... it's..." BS).
+
+[Output](assets/outpout.png)
+   
+4.  **The Art Director:** Analyzes the final copy and generates a high-quality **Nano Banana** prompt to ensure the visual style matches the brand's aesthetic.
+5.  **The Content Vault:** All generated content is automatically logged into a persistent CSV database for historical tracking.
 
 ## 🛠️ The tech stack
 * **Orchestration framework** - `CrewAI` (Managing the collaboration between Agents).
