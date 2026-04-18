@@ -4,7 +4,7 @@
 ---
 
 ## The vision
-Modern marketing demands high-frequency, high-quality content, but "AI-generated" text often feels corporate and hollow. I built the **Kellton EU Social Media Assistant** to bridge this gap. It's a virtual squad that enforces strict brand-voice constraints and integrates real-time market data to ensure every post is grounded in current reality.
+Modern marketing demands high-frequency, high-quality content, but AI-generated text often feels corporate and hollow (and even more cringe than my beloved dad jokes). I built the **Kellton EU Social Media Assistant** to bridge this gap. It's a virtual squad that enforces strict brand-voice constraints and integrates real-time market data to ensure every post is grounded in current reality.
 
 ## 🧠 The solution (How it works)
 The system uses an **Agentic Workflow**, where specialized AI workers collaborate on a single task to ensure depth and accuracy.
