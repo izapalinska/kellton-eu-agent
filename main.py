@@ -309,7 +309,16 @@ with col2:
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
         for index, pojedynczy_temat in enumerate(lista_tematow):
             with st.spinner(f'Processing Batch {index + 1}...'):
-                t0 = Task(description=f"Find 2026 news on: '{pojedynczy_temat}'.", expected_output="Facts/URLs.", agent=researcher)
+                t0 = Task(
+                    description=(
+                        f"Find 2026 news on: '{pojedynczy_temat}'. "
+                        "STRICT RULE: Return ONLY the numbered list of sources, URLs, and summaries. "
+                        "DO NOT include any apologies, disclaimers, or conversational filler like 'Sorry, I can't provide full articles...' or 'Here are the sources'. "
+                        "Start your output immediately with point 1."
+                    ),
+                    expected_output="A clean, direct, numbered list of facts and URLs. No disclaimers, no apologies, no intro.",
+                    agent=researcher
+                )
                 t1 = Task(
                     description=(
                         "Write a charismatic, conversational, engaging LinkedIn post based on the research. "
@@ -334,23 +343,49 @@ with col2:
                 visual_prompt = getattr(t2.output, 'raw_output', str(t2.output))
                 save_to_history(pojedynczy_temat, f"{post_text}\n\nPrompt: {visual_prompt}")
                 
-                # Nagłówek batcha
-                st.markdown(f'''
-                    <div style="font-weight: 800; color: #A765FF; font-size: 14px; margin-top: 20px; margin-bottom: 5px;">
-                        BATCH {index + 1}
+                # Unikalne ID dla każdego batcha, żeby JS wiedział co kopiować
+                post_id = f"post_{index}"
+                prompt_id = f"prompt_{index}"
+
+                # Funkcję w JS do kopiowania 
+                copy_js = """
+                <script>
+                function copyToClipboard(elementId) {
+                    var text = document.getElementById(elementId).innerText;
+                    navigator.clipboard.writeText(text).then(function() {
+                        alert('Skopiowano do schowka!');
+                    }, function(err) {
+                        console.error('Błąd kopiowania: ', err);
+                    });
+                }
+                </script>
+                """
+
+                # Ładna karta a nie jakieś gunwo
+                st.markdown(copy_js + f'''
+                    <div class="result-card" style="position: relative;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <span style="font-weight: 800; color: #A765FF; font-size: 14px;">🚀 BATCH {index + 1}</span>
+                            <button onclick="copyToClipboard('{post_id}')" style="background: #A765FF; color: white; border: none; border-radius: 5px; padding: 5px 10px; cursor: pointer; font-size: 11px; font-weight: bold;">📋 KOPIUJ POST</button>
+                        </div>
+                        
+                        <div id="{post_id}" style="line-height: 1.6; color: white; font-family: sans-serif;">
+                            {post_text.replace(chr(10), '<br>')}
+                        </div>
+
+                        <div style="margin-top: 25px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid #FF66B2; position: relative;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <small style="color: #FF66B2; font-weight: bold;">🎨 VISUAL DESIGN PROMPT:</small>
+                                <button onclick="copyToClipboard('{prompt_id}')" style="background: #FF66B2; color: white; border: none; border-radius: 5px; padding: 3px 8px; cursor: pointer; font-size: 10px; font-weight: bold;">📋 KOPIUJ PROMPT</button>
+                            </div>
+                            <div id="{prompt_id}" style="font-style: italic; font-size: 13px; color: #eee;">
+                                {visual_prompt}
+                            </div>
+                        </div>
                     </div>
                 ''', unsafe_allow_html=True)
                 
-                # Treść posta z przyciskiem kopiowania
-                st.caption("COPY:")
-                st.code(post_text, language="markdown")
-                
-                # Prompt wizualny z przyciskiem kopiowania
-                st.caption("VISUAL DESIGN PROMPT:")
-                st.code(visual_prompt, language="markdown")
-                
-                # Opcjonalny odstęp między kolejnymi batchami
-                st.divider()
+                st.markdown("<br>", unsafe_allow_html=True)
                 
                 with st.expander("🔍 Sources, please!"):
                     st.write(getattr(t0.output, 'raw_output', str(t0.output)))
