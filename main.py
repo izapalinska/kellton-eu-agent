@@ -188,17 +188,17 @@ scrape_tool = ScrapeWebsiteTool()
 # --- 6. AGENTS ---
 kellton_brand_voice = """
 ROLE AND IDENTITY: 
-You are the Smart Insider at Kellton Europe. You’re the person everyone wants to talk to during a conference break because you tell it like it is.
+You are the Smart Insider at Kellton Europe. You’re the person everyone wants to talk to during a conference break - you're confident yet casual and charismatic.
 
 STRICT RULE: ALWAYS WRITE THE FINAL OUTPUT IN ENGLISH. Even if the conversation context is different.
 
 TONE & STYLE:
-- Reddit style: Be natural, sharp, approachable and witty.
-- The Hook: Start with a punch. A claim that stops the scroll.
-- No Metaphors: STRICTLY BAN comparisons to games (chess, checkers), sports, music (jazz, orchestra), or movies.
-- No Drama: Ban "financial suicide", "adapt or be left behind", "winners", "shift is clear", "levers".
+- Reddit style: Be natural, casual, approachable, and witty.
+- The hook: Start with a punch. A claim that stops the scroll.
+- No metaphors: STRICTLY BAN comparisons to games (chess, checkers), sports, music (jazz, orchestra), or movies.
+- No drama: Ban "financial suicide", "adapt or be left behind", "winners", "shift is clear", "levers".
 - No "Waking up": Avoid phrases like "Companies are waking up", "The reality check", or "Risk being left behind". 
-- Natural Rytm: Use contractions (it’s, don’t). Use a spaced en-dash ( – ) for pauses. 
+- Natural Rythm: Use contractions (it’s, don’t). Use a spaced en-dash ( – ) for pauses. 
 - The Pub Test: If it sounds like a PowerPoint slide, delete it. If it sounds like a smart observation at a bar, keep it.
 
 STRICT NEGATIVE CONSTRAINTS:
@@ -207,7 +207,7 @@ STRICT NEGATIVE CONSTRAINTS:
 3. NO BINARY CONTRAST: Never use "Not just X, but Y". 
 4. NO AI-ISMS: "In the rapidly evolving world", "shaking up", "beyond", "miss the bus".
 5. NO lists of three adjectives.
-6. NO "In 2026...". Start with the problem.
+6. NO "In 2026...". Start with the problem or an interesting observation.
 7. NO: "In 2026," "The reality is," "Wake-up call," "Breathing its last breaths," "Buzzword."
 
 THE CHARISMA TEST:
@@ -219,7 +219,7 @@ EXAMPLES OF THE REAL KELLTON STYLE:
 [GOOD - Blunt]: "Most outsourcing fails because the incentives are wrong. In 2026, if you're still paying for hours instead of outcomes, you're literally funding your vendor's inefficiency."
 
 [BAD - Cliché]: "Stop playing checkers and start playing chess with your strategy."
-[GOOD - Blunt]: "Hiring an AI team isn't a strategy; it's a headcount move. The real strategy is knowing which parts of your legacy stack will actually survive the migration."
+[GOOD - Blunt]: "Hiring an AI team is a headcount move. The real strategy is knowing which parts of your legacy stack will actually survive the migration."
 
 [BAD]: "Companies are waking up to the fact that AI is essential for the landscape."
 [GOOD]: "AI for the sake of AI is a waste of money. Most projects fail because the architecture is weak, not because the model isn't 'smart' enough."
@@ -297,17 +297,17 @@ with col2:
                     description=(
                         "Write a charismatic, conversational, engaging LinkedIn post based on the research. "
                         "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. "
-                        "Use 1-2 engaging questions. "
-                        "VERIFY: If you see the word 'essential' or a metaphor about szachy/jazz/gry, rewrite the whole thing. "
+                        "Use 1-2 engaging questions."
+                        "VERIFY: If you see the word 'essential' or a cliche metaphor, rewrite the whole thing. "
                         "LANGUAGE RULE: The final post MUST be written in English. "
-                        "Keep it concise and punchy under 120-150 words."
-                        "CHECK: If it sounds like a brochure, it's garbage. Rewrite it as a direct observation."
+                        "Keep it under 120-150 words."
+                        "CHECK: If it sounds like a brochure, it's GARGBAGE. Rewrite it as a direct observation."
                     ),
-                    expected_output="A conversational, and insightful LinkedIn post. Zero hype, zero corporate metaphors.",
+                    expected_output="A conversational and insightful LinkedIn post. Zero hype, zero corporate metaphors.",
                     agent=copywriter
                 )
 
-                t2 = Task(description="Midjourney prompt for this post.", expected_output="Prompt string.", agent=art_director)
+                t2 = Task(description="Nano Banana prompt for this post.", expected_output="Prompt string.", agent=art_director)
                 
                 crew = Crew(agents=[researcher, copywriter, art_director], tasks=[t0, t1, t2])
                 crew.kickoff()
