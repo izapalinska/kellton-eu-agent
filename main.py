@@ -254,7 +254,7 @@ with st.sidebar:
     st.markdown('''
         <div class="header-with-icon" style="margin-top: 20px;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="url(#icon-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
-            <span style="font-weight: 700; color: #A765FF; font-size: 18px;">Archiwum</span>
+            <span style="font-weight: 700; color: #A765FF; font-size: 18px;">Archives</span>
         </div>
     ''', unsafe_allow_html=True)
     
@@ -321,7 +321,7 @@ with col2:
                         <div style="font-weight: 800; color: #A765FF; font-size: 12px; margin-bottom: 10px;">BATCH {index + 1}</div>
                         <div style="line-height: 1.6;">{post_text.replace(chr(10), '<br>')}</div>
                         <div style="margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid #FF66B2;">
-                            <small style="color: #FF66B2;">MIDJOURNEY PROMPT:</small><br>
+                            <small style="color: #FF66B2;">VISUAL DESIGN PROMPT:</small><br>
                             <i style="font-size: 13px;">{visual_prompt}</i>
                         </div>
                     </div>
