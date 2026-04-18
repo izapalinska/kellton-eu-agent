@@ -352,7 +352,7 @@ with col2:
                         
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                             <span style="font-weight: 800; color: #A765FF; font-size: 14px;">BATCH {index + 1}</span>
-                            <button id="btn-post-{index}" onclick="copyToClipboard('post-text-{index}', 'btn-post-{index}')" style="background: #A765FF; color: white; border: none; border-radius: 5px; padding: 6px 12px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.3s;">📋 KOPIUJ POST</button>
+                            <button id="btn-post-{index}" onclick="copyToClipboard('post-text-{index}', 'btn-post-{index}')" style="background: #A765FF; color: white; border: none; border-radius: 5px; padding: 6px 12px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.3s;">COPY</button>
                         </div>
                         
                         <div id="post-text-{index}" style="line-height: 1.6; font-size: 14px; margin-bottom: 25px;">
@@ -362,7 +362,7 @@ with col2:
                         <div style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid #FF66B2;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                 <small style="color: #FF66B2; font-weight: bold;">VISUAL DESIGN PROMPT:</small>
-                                <button id="btn-prompt-{index}" onclick="copyToClipboard('prompt-text-{index}', 'btn-prompt-{index}')" style="background: #FF66B2; color: white; border: none; border-radius: 5px; padding: 4px 10px; cursor: pointer; font-size: 10px; font-weight: bold; transition: 0.3s;">📋 KOPIUJ PROMPT</button>
+                                <button id="btn-prompt-{index}" onclick="copyToClipboard('prompt-text-{index}', 'btn-prompt-{index}')" style="background: #FF66B2; color: white; border: none; border-radius: 5px; padding: 4px 10px; cursor: pointer; font-size: 10px; font-weight: bold; transition: 0.3s;">COPY</button>
                             </div>
                             <div id="prompt-text-{index}" style="font-style: italic; font-size: 13px; color: #eee;">
                                 {visual_prompt}
