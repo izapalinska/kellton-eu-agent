@@ -222,6 +222,7 @@ STRICT NEGATIVE CONSTRAINTS (HARD BAN):
 4. NO BINARY CONTRAST: Never use "Not just X, but Y". 
 5. NO "In 2026...". Start with the problem.
 6. NO DRAMA: Ban "financial suicide", "adapt or be left behind", "winners", "shift is clear".
+7. NO SALES PITCHES: Never sound like a brochure when mentioning Kellton.
 
 THE CHARISMA TEST:
 If it sounds like an automated bank email OR a chatbot offering help, delete it. 
