@@ -30,7 +30,7 @@ The system uses an **Agentic Workflow**, where specialized AI workers collaborat
 
 ## 🛠️ The tech stack
 * **Orchestration framework** - `CrewAI` (Managing the collaboration between Agents).
-* **Brain power** - `OpenAI GPT-4-mini` (Advanced reasoning and voice adherence).
+* **Brain power** - `OpenAI GPT-5-mini` (Advanced reasoning and voice adherence).
 * **Search intelligence** - `Tavily AI` (Enterprise-grade web search for LLMs).
 * **Interface** - `Streamlit` (A custom-built Python web dashboard).
 * **Data management** - `Pandas` (For the history and archival system).
