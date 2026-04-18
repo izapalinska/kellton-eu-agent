@@ -292,7 +292,7 @@ with col1:
     st.markdown('''
         <div class="header-with-icon">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#icon-grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-            <span style="font-weight: 700; font-size: 24px; color: #A765FF;">WHAT ARE WE WRITING TODAY?</span>
+            <span style="font-weight: 700; font-size: 24px; color: #A765FF;">WHAT ARE WE WRITING ABOUT?</span>
         </div>
     ''', unsafe_allow_html=True)
     temat = st.text_area("", height=250, placeholder="Use any input language you want and separate each idea with ---", label_visibility="collapsed")
@@ -345,26 +345,30 @@ with col2:
                 save_to_history(pojedynczy_temat, f"{post_text}\n\nPrompt: {visual_prompt}")
                 
 
-               # Generujemy bezpieczny HTML z wbudowanym JS
+               # HTML z ładnymi stylami a nie jakieś gunwo
                 html_code = f"""
-                <div style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #FAFAFA; background: transparent;">
-                    <div style="border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 20px; background: rgba(25, 25, 28, 0.8);">
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+                    * {{ font-family: 'Plus Jakarta Sans', sans-serif; }}
+                </style>
+                <div style="background: transparent; padding: 5px;">
+                    <div style="background: #0F0F12; color: #EDEDED; padding: 30px; border-radius: 24px; border: 1px solid rgba(167, 101, 255, 0.2); box-shadow: 0 15px 45px rgba(0,0,0,0.7);">
                         
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <span style="font-weight: 800; color: #A765FF; font-size: 14px;">BATCH {index + 1}</span>
-                            <button id="btn-post-{index}" onclick="copyToClipboard('post-text-{index}', 'btn-post-{index}')" style="background: #A765FF; color: white; border: none; border-radius: 5px; padding: 6px 12px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.3s;">COPY</button>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <span style="font-weight: 800; color: #A765FF; font-size: 14px; letter-spacing: 0.5px;">BATCH {index + 1}</span>
+                            <button id="btn-post-{index}" onclick="copyToClipboard('post-text-{index}', 'btn-post-{index}')" style="background: #A765FF; color: white; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 11px; font-weight: 800; transition: 0.3s; text-transform: uppercase; box-shadow: 0 4px 10px rgba(167, 101, 255, 0.3);">COPY</button>
                         </div>
                         
-                        <div id="post-text-{index}" style="line-height: 1.6; font-size: 14px; margin-bottom: 25px;">
+                        <div id="post-text-{index}" style="line-height: 1.6; font-size: 15px; margin-bottom: 30px; font-weight: 400;">
                             {post_text.replace(chr(10), '<br>')}
                         </div>
 
-                        <div style="padding: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; border-left: 3px solid #FF66B2;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <small style="color: #FF66B2; font-weight: bold;">VISUAL DESIGN PROMPT:</small>
-                                <button id="btn-prompt-{index}" onclick="copyToClipboard('prompt-text-{index}', 'btn-prompt-{index}')" style="background: #FF66B2; color: white; border: none; border-radius: 5px; padding: 4px 10px; cursor: pointer; font-size: 10px; font-weight: bold; transition: 0.3s;">COPY</button>
+                        <div style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 16px; border-left: 3px solid #FF66B2;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <small style="color: #FF66B2; font-weight: 800; font-size: 11px; letter-spacing: 0.5px;">VISUAL DESIGN PROMPT</small>
+                                <button id="btn-prompt-{index}" onclick="copyToClipboard('prompt-text-{index}', 'btn-prompt-{index}')" style="background: #FF66B2; color: white; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 10px; font-weight: 800; transition: 0.3s; text-transform: uppercase; box-shadow: 0 4px 10px rgba(255, 102, 178, 0.3);">COPY</button>
                             </div>
-                            <div id="prompt-text-{index}" style="font-style: italic; font-size: 13px; color: #eee;">
+                            <div id="prompt-text-{index}" style="font-style: italic; font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.5;">
                                 {visual_prompt}
                             </div>
                         </div>
@@ -373,21 +377,18 @@ with col2:
 
                     <script>
                         function copyToClipboard(elementId, buttonId) {{
-                            // Pobieranie tekstu (zamiana <br> z powrotem na nowe linie, żeby ładnie się wklejało)
                             var htmlContent = document.getElementById(elementId).innerHTML;
                             var copyText = htmlContent.replace(/<br\\s*\\/?>/gi, "\\n").replace(/<[^>]*>?/gm, '');
                             
-                            // Animacja przycisku
                             var btn = document.getElementById(buttonId);
                             var originalText = btn.innerText;
-                            btn.innerText = "COPIED";
+                            btn.innerText = "COPIED!";
                             btn.style.opacity = "0.8";
                             setTimeout(function() {{
                                 btn.innerText = originalText;
                                 btn.style.opacity = "1";
                             }}, 2000);
 
-                            // Bezpieczne kopiowanie do schowka
                             var textArea = document.createElement("textarea");
                             textArea.value = copyText.trim();
                             textArea.style.position = "fixed";
@@ -395,18 +396,14 @@ with col2:
                             document.body.appendChild(textArea);
                             textArea.focus();
                             textArea.select();
-                            try {{
-                                document.execCommand('copy');
-                            }} catch (err) {{
-                                console.error('Kopiowanie nie powiodło się', err);
-                            }}
+                            try {{ document.execCommand('copy'); }} catch (err) {{ console.error('ERROR', err); }}
                             document.body.removeChild(textArea);
                         }}
                     </script>
                 </div>
                 """
                 
-                # Wyświetlamy jako wyizolowany komponent (550px wysokości powinno starczyć, scrolling zapobiega ucięciu)
+                # Wyizolowany komponent
                 components.html(html_code, height=550, scrolling=True)
                 
                 st.markdown("<br>", unsafe_allow_html=True)
