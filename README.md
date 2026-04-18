@@ -15,7 +15,7 @@ The system uses an **Agentic Workflow**, where specialized AI workers collaborat
 
 ### 🔄 The pipeline:
 1.  **The Senior Researcher:** Takes a raw topic and uses **Tavily Web Search** to find real-time data and news. No AI hallucinations — only facts.
-3.  **The Lead Strategist:** Receives the research and applies the **Kellton Brand Voice**. It uses Negative Constraints (a LOT of them XD) to surgically remove corporate buzzwords (no "synergy," no "chess/jazz" metaphors, no classic "It's not... it's..." BS).
+3.  **The Lead Strategist:** Receives the research and applies the **Kellton Brand Voice**. It uses Negative Constraints (a LOT of them XD) to surgically remove corporate buzzwords (no "synergy," no "chess/jazz" metaphors, no classic "It's not... it's..." BS). Is it perfect? By no means, no. Friendly reminder that HUMAN LINGUISTIC QA WILL NEVER BE DEAD *thankyouverymuch*
 4.  **The Art Director:** Analyzes the final copy and generates a high-quality **Nano Banana** prompt to ensure the visual style matches the brand's aesthetic.
 
 <p align="center">
