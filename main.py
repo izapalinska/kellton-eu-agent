@@ -470,9 +470,11 @@ with col2:
                 t_edit = Task(
                     description=(
                         "Review the draft. "
-                        "1. Kill all jargon. "
-                        "2. Ensure contractions are used. "
+                        "Write a charismatic, conversational, engaging LinkedIn post based on the research. "
+                        "Ensure contractions are used. "
+                        "Keep it under 120-150 words."
                         f"3. CRITICAL: Maintain the requested {post_format} structure. If it is a Poll, do not turn it into a standard post."
+                        "LANGUAGE RULE: The final post MUST be written in English. "
                     ),
                     expected_output="Final polished content.",
                     agent=editor
