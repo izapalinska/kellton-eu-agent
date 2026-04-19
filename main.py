@@ -355,21 +355,11 @@ with col2:
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
         for index, pojedynczy_temat in enumerate(lista_tematow):
             with st.spinner(f'Processing Batch {index + 1}...'):
-                # Instrukcje formatowania dla agenta
-                format_rules = ""
-                if post_format == "Carousel outline":
-                    format_rules = "FORMAT RULE: Write this as a text outline for a LinkedIn Carousel. Structure it strictly as 'Slide 1:', 'Slide 2:', etc. Keep the text on each slide extremely punchy and informative."
-                elif post_format == "LinkedIn poll":
-                    format_rules = "FORMAT RULE: Write this as a LinkedIn Poll. Open with a provocative question, give 1-2 sentences of context, and explicitly list 3-4 poll voting options at the end. Each poll option must be 30 characters long max."
-                elif post_format == "Case study":
-                    format_rules = "FORMAT RULE: Write this as a mini case-study. Structure: 1. The Problem, 2. The Fix, 3. The Result. Keep it grounded in reality."
-                else:
-                    format_rules = "FORMAT RULE: Standard text post. Strictly follow the 2-1-3 structure defined in your identity."
                 tasks_list = []
                 agents_list = []
 
+                # --- 1. BADACZ (Opcjonalny) ---
                 if use_research:
-                    # Sprawdzamy, czy podałaś link, czy tylko temat
                     if source_url:
                         research_prompt = f"Scrape and analyze the content from this URL: {source_url}. Focus on how it relates to: '{pojedynczy_temat}'."
                     else:
@@ -403,6 +393,7 @@ with col2:
                         "LANGUAGE RULE: The final post MUST be written in English. Keep it under 120-150 words."
                     )
 
+                # --- 2. COPYWRITER ---
                 t1 = Task(
                     description=t1_desc,
                     expected_output="A conversational and insightful LinkedIn post. Zero hype, zero corporate metaphors.",
@@ -410,21 +401,23 @@ with col2:
                 )
                 tasks_list.append(t1)
                 agents_list.append(copywriter)
-                tasks_list.append(t_edit)
-                agents_list.append(editor)
 
+                # --- 3. REDAKTOR (Strażnik Marki) ---
                 t_edit = Task(
                     description=(
                         "Review and refine the draft provided by the copywriter. "
                         "1. Eliminate ALL forbidden words and corporate jargon. "
-                        "2. Ensure contractions are used and the tone is conversational, natural, and professional ('No bullshit' rule). "
+                        "2. Ensure contractions are used and the tone is conversational, casual but professional ('No bullshit' rule). "
                         "3. Keep the requested format intact (Carousel, Poll, Standard, etc.). "
                         "STRICT RULE: Output ONLY the final polished text. Do not add any introductory phrases like 'Here is the edited text' or commentary."
                     ),
                     expected_output="The final, polished LinkedIn post, fully compliant with the brand voice.",
                     agent=editor
                 )
+                tasks_list.append(t_edit)
+                agents_list.append(editor)
 
+                # --- 4. ART DIRECTOR ---
                 t2 = Task(
                     description="Nano Banana prompt for this post.", 
                     expected_output="Prompt string.", 
@@ -433,12 +426,14 @@ with col2:
                 tasks_list.append(t2)
                 agents_list.append(art_director)
                 
-                # Odpalamy Crew tylko z aktywnymi agentami
+                # --- ODPALENIE MASZYNY ---
                 crew = Crew(agents=agents_list, tasks=tasks_list)
                 crew.kickoff()
                 
+                # Pobieramy wynik od redaktora (t_edit), a nie od copywritera!
                 post_text = getattr(t_edit.output, 'raw_output', str(t_edit.output))
                 visual_prompt = getattr(t2.output, 'raw_output', str(t2.output))
+                
                 save_to_history(pojedynczy_temat, f"{post_text}\n\nPrompt: {visual_prompt}")
                 
 
