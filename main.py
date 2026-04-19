@@ -29,7 +29,7 @@ def load_history():
 
 def notify_done():
     # 1. Wyświetla ładny komunikat w rogu aplikacji
-    st.toast('We're done!', icon='⚡')
+    st.toast("We're done!", icon="⚡")
     
     # 2. Odtwarza krótki, dyskretny dźwięk (usłyszysz z innej zakładki)
     audio_html = """
