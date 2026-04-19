@@ -402,12 +402,19 @@ with col2:
             <span style="font-weight: 700; font-size: 24px; color: #A765FF;">RESULT</span>
         </div>
     ''', unsafe_allow_html=True)
+
+    # --- 1. INICJALIZACJA PAMIĘCI ---
+    if 'wygenerowane_posty' not in st.session_state:
+        st.session_state.wygenerowane_posty = []
+
+    # --- 2. FAZA GENEROWANIA (Pracuje tylko po kliknięciu "GET TO WORK") ---
     if btn and temat:
+        st.session_state.wygenerowane_posty = [] # Czyścimy starą pamięć
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
+        
         for index, pojedynczy_temat in enumerate(lista_tematow):
             with st.spinner(f'Processing Batch {index + 1}...'):
                 
-                # --- 0. DEFINICJA FORMATU (TERAZ Z JASNYM ROZDZIAŁEM) ---
                 format_rules = ""
                 if post_format == "Carousel outline":
                     format_rules = "OVERRIDE STRUCTURE: Do NOT use the 2-1-3 rule. Write this strictly as a LinkedIn Carousel outline (Slide 1, Slide 2, etc.)."
@@ -416,13 +423,11 @@ with col2:
                 elif post_format == "Case study":
                     format_rules = "OVERRIDE STRUCTURE: Do NOT use the 2-1-3 rule. Use a Case Study structure (Problem, Fix, Result)."
                 else:
-                    # Tylko tutaj wymuszamy 2-1-3
                     format_rules = "STRUCTURE RULE: Strictly follow the 2-1-3 structure (Hook, Meat, Takeaway) as defined in your identity."
 
                 tasks_list = []
                 agents_list = []
 
-                # --- 1. BADACZ (Bez zmian) ---
                 if use_research:
                     if source_url:
                         research_prompt = f"Scrape and analyze the content from this URL: {source_url}. Focus on how it relates to: '{pojedynczy_temat}'."
@@ -440,7 +445,6 @@ with col2:
                     tasks_list.append(t0)
                     agents_list.append(researcher)
                     
-                    # USUNĘLIŚMY "Follow the 2-1-3" z końca - teraz siedzi w format_rules
                     t1_desc = (
                         f"Write a charismatic LinkedIn post based on the research provided. "
                         f"{format_rules} "
@@ -448,7 +452,6 @@ with col2:
                         "LANGUAGE RULE: Write in English. Keep it under 150 words."
                     )
                 else:
-                    # Tu również usuwamy sztywne 2-1-3 z końca opisu
                     t1_desc = (
                         f"Write a charismatic LinkedIn post based EXACTLY on this input: '{pojedynczy_temat}'. "
                         "Do not search for external facts. "
@@ -457,24 +460,16 @@ with col2:
                         "LANGUAGE RULE: Write in English. Keep it under 150 words."
                     )
 
-                # --- 2. COPYWRITER ---
-                t1 = Task(
-                    description=t1_desc,
-                    expected_output="A charismatic LinkedIn content in the requested format.",
-                    agent=copywriter
-                )
+                t1 = Task(description=t1_desc, expected_output="A charismatic LinkedIn content.", agent=copywriter)
                 tasks_list.append(t1)
                 agents_list.append(copywriter)
 
-                # --- 3. REDAKTOR (Dodajemy mu przypomnienie o formacie) ---
                 t_edit = Task(
                     description=(
                         "Review the draft. "
-                        "Write a charismatic, conversational, engaging LinkedIn post based on the research. "
-                        "Ensure contractions are used. "
-                        "Keep it under 120-150 words."
+                        "1. Kill all jargon. "
+                        "2. Ensure contractions are used. "
                         f"3. CRITICAL: Maintain the requested {post_format} structure. If it is a Poll, do not turn it into a standard post."
-                        "LANGUAGE RULE: The final post MUST be written in English. "
                     ),
                     expected_output="Final polished content.",
                     agent=editor
@@ -482,115 +477,117 @@ with col2:
                 tasks_list.append(t_edit)
                 agents_list.append(editor)
 
-                # --- 4. ART DIRECTOR (Warunkowy) ---
-                # Odpalamy agenta od promptów TYLKO jeśli to NIE jest ankieta
                 if post_format != "LinkedIn poll":
-                    t2 = Task(
-                        description="Nano Banana prompt for this post.", 
-                        expected_output="Prompt string.", 
-                        agent=art_director
-                    )
+                    t2 = Task(description="Nano Banana prompt for this post.", expected_output="Prompt string.", agent=art_director)
                     tasks_list.append(t2)
                     agents_list.append(art_director)
                 
-                # --- ODPALENIE MASZYNY ---
                 crew = Crew(agents=agents_list, tasks=tasks_list)
                 crew.kickoff()
                 
-                # Pobieramy wynik od redaktora
+                # Zbieranie wyników po cichu
                 post_text = getattr(t_edit.output, 'raw_output', str(t_edit.output))
                 
-                # Pobieramy prompt wizualny warunkowo
                 if post_format != "LinkedIn poll":
                     visual_prompt = getattr(t2.output, 'raw_output', str(t2.output))
                 else:
                     visual_prompt = "N/A - Polls do not require images."
                 
-                save_to_history(pojedynczy_temat, f"{post_text}\n\nPrompt: {visual_prompt}")
+                if use_research:
+                    research_out = getattr(t0.output, 'raw_output', str(t0.output))
+                else:
+                    research_out = "Web research was disabled for this post."
                 
+                save_to_history(pojedynczy_temat, f"{post_text}\n\nPrompt: {visual_prompt}")
+                send_external_notification(pojedynczy_temat)
+                
+                # ZAPIS DO PAMIĘCI STREAMLITA (Kluczowy krok)
+                st.session_state.wygenerowane_posty.append({
+                    "post_text": post_text,
+                    "visual_prompt": visual_prompt,
+                    "research_out": research_out,
+                    "format": post_format
+                })
 
-               # HTML z ładnymi stylami a nie jakieś gunwo
-                html_code = f"""
-                <style>
-                    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-                    * {{ font-family: 'Plus Jakarta Sans', sans-serif; }}
-                </style>
-                <div style="background: transparent; padding: 5px;">
-                    <div style="background: #0F0F12; color: #EDEDED; padding: 30px; border-radius: 24px; border: 1px solid rgba(167, 101, 255, 0.2); box-shadow: 0 15px 45px rgba(0,0,0,0.7);">
-                        
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                            <span style="font-weight: 800; color: #A765FF; font-size: 14px; letter-spacing: 0.5px;">BATCH {index + 1}</span>
-                            <button id="btn-post-{index}" onclick="copyToClipboard('post-text-{index}', 'btn-post-{index}')" style="background: #A765FF; color: white; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 11px; font-weight: 800; transition: 0.3s; text-transform: uppercase; box-shadow: 0 4px 10px rgba(167, 101, 255, 0.3);">COPY</button>
-                        </div>
-                        
-                        <div id="post-text-{index}" style="line-height: 1.6; font-size: 15px; margin-bottom: 30px; font-weight: 400;">
-                            {post_text.replace(chr(10), '<br>')}
-                        </div>
-
-                        <div style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 16px; border-left: 3px solid #FF66B2;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                                <small style="color: #FF66B2; font-weight: 800; font-size: 11px; letter-spacing: 0.5px;">VISUAL DESIGN PROMPT</small>
-                                <button id="btn-prompt-{index}" onclick="copyToClipboard('prompt-text-{index}', 'btn-prompt-{index}')" style="background: #FF66B2; color: white; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 10px; font-weight: 800; transition: 0.3s; text-transform: uppercase; box-shadow: 0 4px 10px rgba(255, 102, 178, 0.3);">COPY</button>
-                            </div>
-                            <div id="prompt-text-{index}" style="font-style: italic; font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.5;">
-                                {visual_prompt}
-                            </div>
-                        </div>
-
+    # --- 3. FAZA WYŚWIETLANIA (Działa zawsze, czyta z pamięci) ---
+    if st.session_state.wygenerowane_posty:
+        for index, dane in enumerate(st.session_state.wygenerowane_posty):
+            
+            html_code = f"""
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+                * {{ font-family: 'Plus Jakarta Sans', sans-serif; }}
+            </style>
+            <div style="background: transparent; padding: 5px;">
+                <div style="background: #0F0F12; color: #EDEDED; padding: 30px; border-radius: 24px; border: 1px solid rgba(167, 101, 255, 0.2); box-shadow: 0 15px 45px rgba(0,0,0,0.7);">
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <span style="font-weight: 800; color: #A765FF; font-size: 14px; letter-spacing: 0.5px;">BATCH {index + 1}</span>
+                        <button id="btn-post-{index}" onclick="copyToClipboard('post-text-{index}', 'btn-post-{index}')" style="background: #A765FF; color: white; border: none; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: 11px; font-weight: 800; transition: 0.3s; text-transform: uppercase; box-shadow: 0 4px 10px rgba(167, 101, 255, 0.3);">COPY</button>
+                    </div>
+                    
+                    <div id="post-text-{index}" style="line-height: 1.6; font-size: 15px; margin-bottom: 30px; font-weight: 400;">
+                        {dane['post_text'].replace(chr(10), '<br>')}
                     </div>
 
-                    <script>
-                        function copyToClipboard(elementId, buttonId) {{
-                            var htmlContent = document.getElementById(elementId).innerHTML;
-                            var copyText = htmlContent.replace(/<br\\s*\\/?>/gi, "\\n").replace(/<[^>]*>?/gm, '');
-                            
-                            var btn = document.getElementById(buttonId);
-                            var originalText = btn.innerText;
-                            btn.innerText = "COPIED!";
-                            btn.style.opacity = "0.8";
-                            setTimeout(function() {{
-                                btn.innerText = originalText;
-                                btn.style.opacity = "1";
-                            }}, 2000);
-
-                            var textArea = document.createElement("textarea");
-                            textArea.value = copyText.trim();
-                            textArea.style.position = "fixed";
-                            textArea.style.left = "-9999px";
-                            document.body.appendChild(textArea);
-                            textArea.focus();
-                            textArea.select();
-                            try {{ document.execCommand('copy'); }} catch (err) {{ console.error('ERROR', err); }}
-                            document.body.removeChild(textArea);
-                        }}
-                    </script>
+                    <div style="padding: 20px; background: rgba(255,255,255,0.03); border-radius: 16px; border-left: 3px solid #FF66B2;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <small style="color: #FF66B2; font-weight: 800; font-size: 11px; letter-spacing: 0.5px;">VISUAL DESIGN PROMPT</small>
+                            <button id="btn-prompt-{index}" onclick="copyToClipboard('prompt-text-{index}', 'btn-prompt-{index}')" style="background: #FF66B2; color: white; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 10px; font-weight: 800; transition: 0.3s; text-transform: uppercase; box-shadow: 0 4px 10px rgba(255, 102, 178, 0.3);">COPY</button>
+                        </div>
+                        <div id="prompt-text-{index}" style="font-style: italic; font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.5;">
+                            {dane['visual_prompt']}
+                        </div>
+                    </div>
                 </div>
-                """
-                
-                # Wyizolowany komponent
-                components.html(html_code, height=550, scrolling=True)
-                
-                st.markdown("<br>", unsafe_allow_html=True)
-                
-                # --- TUTAJ DODAJEMY UI DO GRAFIK ---
-                if post_format in ["Standard post", "Case study"]:
-                    with st.expander("Generate simple graphic"):
+
+                <script>
+                    function copyToClipboard(elementId, buttonId) {{
+                        var htmlContent = document.getElementById(elementId).innerHTML;
+                        var copyText = htmlContent.replace(/<br\\s*\\/?>/gi, "\\n").replace(/<[^>]*>?/gm, '');
                         
-                        header_input = st.text_area("Duży nagłówek (Główny przekaz)", value="Twoje hasło...", height=80, key=f"head_{index}")
-                        sub_header_input = st.text_area("Mały tekst (Rozwinięcie)", value="Krótkie wyjaśnienie, które pojawi się niżej.", height=80, key=f"sub_{index}")
-                        
-                        if st.button("Wygeneruj PNG", key=f"btn_img_{index}"):
-                            gotowa_grafika = generate_quote_card(header_input, sub_header_input)
-                            st.image(gotowa_grafika, caption="TYour new post", use_container_width=True)
-                            
-                            st.download_button(
-                                label="⬇️ DOWNLOAD PNG",
-                                data=gotowa_grafika,
-                                file_name=f"kellton_post_{index}.png",
-                                mime="image/png",
-                                use_container_width=True
-                            )
-                # -----------------------------------
+                        var btn = document.getElementById(buttonId);
+                        var originalText = btn.innerText;
+                        btn.innerText = "COPIED!";
+                        btn.style.opacity = "0.8";
+                        setTimeout(function() {{
+                            btn.innerText = originalText;
+                            btn.style.opacity = "1";
+                        }}, 2000);
+
+                        var textArea = document.createElement("textarea");
+                        textArea.value = copyText.trim();
+                        textArea.style.position = "fixed";
+                        textArea.style.left = "-9999px";
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        try {{ document.execCommand('copy'); }} catch (err) {{ console.error('ERROR', err); }}
+                        document.body.removeChild(textArea);
+                    }}
+                </script>
+            </div>
+            """
+            components.html(html_code, height=550, scrolling=True)
+            st.markdown("<br>", unsafe_allow_html=True)
+            
+            # --- MODUŁ DO GRAFIK ---
+            if dane['format'] in ["Standard post", "Case study"]:
+                with st.expander("Generate simple graphic"):
+                    header_input = st.text_area("Duży nagłówek (Główny przekaz)", value="Twoje hasło...", height=80, key=f"head_{index}")
+                    sub_header_input = st.text_area("Mały tekst (Rozwinięcie)", value="Krótkie wyjaśnienie, które pojawi się niżej.", height=80, key=f"sub_{index}")
+                    
+                    if st.button("Wygeneruj PNG", key=f"btn_img_{index}"):
+                        gotowa_grafika = generate_quote_card(header_input, sub_header_input)
+                        st.image(gotowa_grafika, caption="Twój nowy post", use_container_width=True)
+                        st.download_button(
+                            label="⬇️ DOWNLOAD PNG",
+                            data=gotowa_grafika,
+                            file_name=f"kellton_post_{index}.png",
+                            mime="image/png",
+                            use_container_width=True
+                        )
+            
                 
                 with st.expander("🔍 Sources, please!"):
                     if use_research:
