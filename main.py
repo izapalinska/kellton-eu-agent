@@ -318,6 +318,13 @@ with col1:
     # DODANY TOGGLE:
     use_research = st.toggle("🔍 Enable web research", value=True, help="Turn off to generate a post strictly from your input without searching the web.")
     
+    # DODANY WYBÓR FORMATU:
+    post_format = st.selectbox(
+        "Select post format",
+        options=["Standard post", "Carousel outline", "LinkedIn poll", "Case study"],
+        index=0
+    )
+    
     btn = st.button("GET TO WORK, BRO")
 
 
@@ -332,6 +339,16 @@ with col2:
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
         for index, pojedynczy_temat in enumerate(lista_tematow):
             with st.spinner(f'Processing Batch {index + 1}...'):
+                # Instrukcje formatowania dla agenta
+                format_rules = ""
+                if post_format == "Carousel outline":
+                    format_rules = "FORMAT RULE: Write this as a text outline for a LinkedIn Carousel. Structure it strictly as 'Slide 1:', 'Slide 2:', etc. Keep the text on each slide extremely punchy and informative."
+                elif post_format == "LinkedIn poll":
+                    format_rules = "FORMAT RULE: Write this as a LinkedIn Poll. Open with a provocative question, give 1-2 sentences of context, and explicitly list 3-4 poll voting options at the end. Each poll option must be 30 characters long max."
+                elif post_format == "Case study":
+                    format_rules = "FORMAT RULE: Write this as a mini case-study. Structure: 1. The Problem, 2. The Fix, 3. The Result. Keep it grounded in reality."
+                else:
+                    format_rules = "FORMAT RULE: Standard text post. Strictly follow the 2-1-3 structure defined in your identity."
                 tasks_list = []
                 agents_list = []
 
