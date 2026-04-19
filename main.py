@@ -572,7 +572,7 @@ with col2:
             
             # --- MODUŁ DO GRAFIK ---
             if dane['format'] in ["Standard post", "Case study"]:
-                with st.expander("Generate simple graphic"):
+                with st.expander("🎨 Generate simple graphic"):
                     header_input = st.text_area("Duży nagłówek (Główny przekaz)", value="Twoje hasło...", height=80, key=f"head_{index}")
                     sub_header_input = st.text_area("Mały tekst (Rozwinięcie)", value="Krótkie wyjaśnienie, które pojawi się niżej.", height=80, key=f"sub_{index}")
                     
@@ -587,16 +587,11 @@ with col2:
                             use_container_width=True
                         )
             
-                
-                with st.expander("🔍 Sources, please!"):
-                    if use_research:
-                        st.write(getattr(t0.output, 'raw_output', str(t0.output)))
-                    else:
-                        st.write("Web research was disabled for this post.")
-                        
-               
-                # NOWE WYWOŁANIE POWIADOMIENIA:
-                send_external_notification(pojedynczy_temat)
+            # --- ŹRÓDŁA (TERAZ BEZPIECZNIE CZYTAJĄCE Z PAMIĘCI) ---
+            with st.expander("🔍 Sources, please!"):
+                st.write(dane['research_out'])
 
+    # UWAGA: Usunęliśmy stąd wywołanie powiadomienia! 
+    # Funkcja send_external_notification(pojedynczy_temat) jest już bezpiecznie ukryta w fazie 2, gdzie agenci kończą pracę.
             
 
