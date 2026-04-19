@@ -332,34 +332,53 @@ with col2:
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
         for index, pojedynczy_temat in enumerate(lista_tematow):
             with st.spinner(f'Processing Batch {index + 1}...'):
-                t0 = Task(
-                    description=(
-                        f"Find 2026 news on: '{pojedynczy_temat}'. "
-                        "STRICT RULE: Return ONLY the numbered list of sources, URLs, and summaries. "
-                        "DO NOT include any apologies, disclaimers, or conversational filler like 'Sorry, I can't provide full articles...' or 'Here are the sources'. "
-                        "Start your output immediately with point 1."
-                    ),
-                    expected_output="A clean, direct, numbered list of facts and URLs. No disclaimers, no apologies, no intro.",
-                    agent=researcher
-                )
+                tasks_list = []
+                agents_list = []
+
+                if use_research:
+                    t0 = Task(
+                        description=(
+                            f"Find 2026 news on: '{pojedynczy_temat}'. "
+                            "STRICT RULE: Return ONLY the numbered list of sources, URLs, and summaries. "
+                            "DO NOT include any apologies, disclaimers, or conversational filler."
+                        ),
+                        expected_output="A clean, direct, numbered list of facts and URLs.",
+                        agent=researcher
+                    )
+                    tasks_list.append(t0)
+                    agents_list.append(researcher)
+                    
+                    t1_desc = (
+                        f"Write a charismatic, conversational LinkedIn post based on the research provided for the topic: '{pojedynczy_temat}'. "
+                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. Follow the 2-1-3 structure. "
+                        "LANGUAGE RULE: The final post MUST be written in English. Keep it under 120-150 words."
+                    )
+                else:
+                    t1_desc = (
+                        f"Write a charismatic, conversational LinkedIn post based EXACTLY and ONLY on this input: '{pojedynczy_temat}'. "
+                        "Do not search for external facts. "
+                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. Follow the 2-1-3 structure. "
+                        "LANGUAGE RULE: The final post MUST be written in English. Keep it under 120-150 words."
+                    )
+
                 t1 = Task(
-                    description=(
-                        "Write a charismatic, conversational, engaging LinkedIn post based on the research. "
-                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. "
-                        "Follow the 2-1-3 structure."
-                        "Translate the raw notes into a sharp opinion about business impact"
-                        "VERIFY: If you see the word 'essential' or a cliche metaphor, rewrite the whole thing."
-                        "LANGUAGE RULE: The final post MUST be written in English. "
-                        "Keep it under 120-150 words."
-                        "CHECK: If it sounds like a brochure, it's GARGBAGE. Rewrite it as a direct observation."
-                    ),
+                    description=t1_desc,
                     expected_output="A conversational and insightful LinkedIn post. Zero hype, zero corporate metaphors.",
                     agent=copywriter
                 )
+                tasks_list.append(t1)
+                agents_list.append(copywriter)
 
-                t2 = Task(description="Nano Banana prompt for this post.", expected_output="Prompt string.", agent=art_director)
+                t2 = Task(
+                    description="Nano Banana prompt for this post.", 
+                    expected_output="Prompt string.", 
+                    agent=art_director
+                )
+                tasks_list.append(t2)
+                agents_list.append(art_director)
                 
-                crew = Crew(agents=[researcher, copywriter, art_director], tasks=[t0, t1, t2])
+                # Odpalamy Crew tylko z aktywnymi agentami
+                crew = Crew(agents=agents_list, tasks=tasks_list)
                 crew.kickoff()
                 
                 post_text = getattr(t1.output, 'raw_output', str(t1.output))
@@ -431,7 +450,13 @@ with col2:
                 st.markdown("<br>", unsafe_allow_html=True)
                 
                 with st.expander("🔍 Sources, please!"):
-                    st.write(getattr(t0.output, 'raw_output', str(t0.output)))
+                    if use_research:
+                        st.write(getattr(t0.output, 'raw_output', str(t0.output)))
+                    else:
+                        st.write("Web research was disabled for this post.")
+                        
+               
+                trigger_notification("Task complete!", "Your post is ready for review.")
 
-                trigger_notification("We're ready!", f"Post about: {pojedynczy_temat} is done")
+            
 
