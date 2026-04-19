@@ -286,7 +286,7 @@ Follow this exact formatting for breathability:
 
 STRICT NEGATIVE CONSTRAINTS (HARD BAN):
 1. NO AI-ASSISTANT TALK: Never offer to send more info. Never say "Here is the post."
-2. NO HYPE: Ban "VIP", "jazz", "chess", "checkers", "playbook", "underdogs", "strings", "sauce", "recipe", "flashy", "growth lever", "tangible", "strategic".
+2. NO HYPE: Ban "VIP", "jazz", "chess", "checkers", "playbook", "underdogs", "strings", "sauce", "recipe", "flashy", "growth lever", "tangible", "strategic", "no buzz, no fluff".
 3. NO CORPORATE BUZZWORDS: synergy, leverage, game-changing, revolutionary, robust, seamless, cutting-edge, secret sauce, heavy lifting.
 4. NO BINARY CONTRAST: Never use "Not just X, but Y". 
 5. NO "In 2026...". Start with the problem.
@@ -436,9 +436,11 @@ with col2:
                     t0 = Task(
                         description=(
                             f"{research_prompt} "
-                            "STRICT RULE: Return ONLY the numbered list of key facts and insights. No filler."
+                            "STRICT RULE: Return a numbered list of key facts and insights. "
+                            "CRITICAL: You MUST include the source URL for every fact or insight you provide. "
+                            "No conversational filler. Start immediately with point 1."
                         ),
-                        expected_output="A clean, direct, numbered list of facts.",
+                        expected_output="A numbered list of facts, each followed by its source URL.",
                         agent=researcher
                     )
                     tasks_list.append(t0)
@@ -468,6 +470,9 @@ with col2:
                         "Review the draft. "
                         "1. Kill all jargon. "
                         "2. Ensure contractions are used. "
+                        "LANGUAGE RULE: Write in English. Keep it under 150 words."
+                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. "
+                        "Ensure the tone is casual, yet informative."
                         f"3. CRITICAL: Maintain the requested {post_format} structure. If it is a Poll, do not turn it into a standard post."
                     ),
                     expected_output="Final polished content.",
@@ -508,7 +513,6 @@ with col2:
                     "format": post_format
                 })
 
-    # --- 3. FAZA WYŚWIETLANIA (Działa zawsze, czyta z pamięci) ---
     if st.session_state.wygenerowane_posty:
         for index, dane in enumerate(st.session_state.wygenerowane_posty):
             
@@ -589,9 +593,7 @@ with col2:
             
             # --- ŹRÓDŁA (TERAZ BEZPIECZNIE CZYTAJĄCE Z PAMIĘCI) ---
             with st.expander("🔍 Sources, please!"):
+                # Tu czytamy z 'dane', a nie z 't0'!
                 st.write(dane['research_out'])
 
-    # UWAGA: Usunęliśmy stąd wywołanie powiadomienia! 
-    # Funkcja send_external_notification(pojedynczy_temat) jest już bezpiecznie ukryta w fazie 2, gdzie agenci kończą pracę.
-            
 
