@@ -355,6 +355,18 @@ with col2:
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
         for index, pojedynczy_temat in enumerate(lista_tematow):
             with st.spinner(f'Processing Batch {index + 1}...'):
+                
+                # --- 0. DEFINICJA FORMATU (To zgubiliśmy wcześniej!) ---
+                format_rules = ""
+                if post_format == "Carousel Outline":
+                    format_rules = "FORMAT RULE: Write this as a text outline for a LinkedIn Carousel. Structure it strictly as 'Slide 1:', 'Slide 2:', etc. Keep the text on each slide extremely punchy and short."
+                elif post_format == "LinkedIn Poll":
+                    format_rules = "FORMAT RULE: Write this as a LinkedIn Poll. Open with a provocative question, give 1-2 sentences of context, and explicitly list 3-4 poll voting options at the end."
+                elif post_format == "Case Study":
+                    format_rules = "FORMAT RULE: Write this as a mini case-study. Structure: 1. The Problem, 2. The Fix, 3. The Result. Keep it grounded in reality."
+                else:
+                    format_rules = "FORMAT RULE: Standard text post. Strictly follow the 2-1-3 structure defined in your identity."
+
                 tasks_list = []
                 agents_list = []
 
@@ -407,7 +419,7 @@ with col2:
                     description=(
                         "Review and refine the draft provided by the copywriter. "
                         "1. Eliminate ALL forbidden words and corporate jargon. "
-                        "2. Ensure contractions are used and the tone is conversational, casual but professional ('No bullshit' rule). "
+                        "2. Ensure contractions are used and the tone is conversational but professional ('No bullshit' rule). "
                         "3. Keep the requested format intact (Carousel, Poll, Standard, etc.). "
                         "STRICT RULE: Output ONLY the final polished text. Do not add any introductory phrases like 'Here is the edited text' or commentary."
                     ),
@@ -430,7 +442,7 @@ with col2:
                 crew = Crew(agents=agents_list, tasks=tasks_list)
                 crew.kickoff()
                 
-                # Pobieramy wynik od redaktora (t_edit), a nie od copywritera!
+                # Pobieramy wynik od redaktora (t_edit)
                 post_text = getattr(t_edit.output, 'raw_output', str(t_edit.output))
                 visual_prompt = getattr(t2.output, 'raw_output', str(t2.output))
                 
