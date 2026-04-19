@@ -33,13 +33,13 @@ def load_history():
     return pd.DataFrame(columns=['Date', 'Topic/Notes', 'Generated Content'])
 
 def send_external_notification(topic):
-    # Wymyśl bardzo nietypową nazwę kanału (np. z ciągiem cyfr, żeby nikt tu nie wszedł)
+    # gunwo nie działa ale zostawiam na razie żeby mi sie nie pomyliło
     url = "https://ntfy.sh/kellton_content_alerts_8833" 
     
     wiadomosc = f"Post: {topic} is ready!"
     
     try:
-        # Wysyłamy sygnał push
+        # Wysyłamy sygnał push - w teorii lol
         requests.post(url, data=wiadomosc.encode('utf-8'), headers={
             "Title": "Kellton Content Engine",
             "Tags": "white_check_mark"
@@ -63,7 +63,7 @@ def generate_quote_card(main_header, sub_header):
     draw = ImageDraw.Draw(img)
     
     try:
-        # Dwa rozmiary fonyu
+        # Dwa rozmiary fontu
         font_large = ImageFont.truetype("Figtree-Medium.ttf", 120) # Główny, duży tytuł
         font_small = ImageFont.truetype("Figtree-Medium.ttf", 45) # Mniejszy podtytuł
     except IOError:
@@ -575,7 +575,7 @@ with col2:
             
             # --- MODUŁ DO GRAFIK ---
             if dane['format'] in ["Standard post", "Case study"]:
-                with st.expander("Generate simple graphic"):
+                with st.expander("Generate a simple graphic"):
                     header_input = st.text_area("Main header", value="Blah blah blah", height=80, key=f"head_{index}")
                     sub_header_input = st.text_area("Subtitle", value="Even more blah blah", height=80, key=f"sub_{index}")
                     
