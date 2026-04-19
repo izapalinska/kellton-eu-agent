@@ -27,23 +27,18 @@ def load_history():
         return pd.read_csv(FILE_NAME, encoding='utf-8-sig')
     return pd.DataFrame(columns=['Date', 'Topic/Notes', 'Generated Content'])
 
-def trigger_notification(title, body):
-    js_code = f"""
-    <script>
-        if ("Notification" in window) {{
-            if (Notification.permission === "granted") {{
-                new Notification("{title}", {{body: "{body}"}});
-            }} else if (Notification.permission !== "denied") {{
-                Notification.requestPermission().then(permission => {{
-                    if (permission === "granted") {{
-                        new Notification("{title}", {{body: "{body}"}});
-                    }}
-                }});
-            }}
-        }}
-    </script>
+def notify_done():
+    # 1. Wyświetla ładny komunikat w rogu aplikacji
+    st.toast('We're done!', icon='⚡')
+    
+    # 2. Odtwarza krótki, dyskretny dźwięk (usłyszysz z innej zakładki)
+    audio_html = """
+        <audio autoplay="true" style="display:none;">
+            <source src="https://upload.wikimedia.org/wikipedia/commons/4/43/Beep.ogg" type="audio/ogg">
+        </audio>
     """
-    components.html(js_code, height=0, width=0)
+    st.markdown(audio_html, unsafe_allow_html=True)
+    
     
 # --- 3. CUSTOM CSS (FULL REPAIRED VERSION) ---
 st.markdown("""
@@ -519,7 +514,8 @@ with col2:
                         st.write("Web research was disabled for this post.")
                         
                
-                trigger_notification("Task complete!", "Your post is ready for review.")
+                # NOWE WYWOŁANIE POWIADOMIENIA:
+                notify_done()
 
             
 
