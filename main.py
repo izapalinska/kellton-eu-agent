@@ -74,7 +74,7 @@ def generate_quote_card(main_header, sub_header):
     y_text = 320 # Punkt startowy od góry
     
     # 1. DUŻY NAGŁÓWEK
-    lines_main = textwrap.wrap(main_header, width=18) 
+    lines_main = textwrap.wrap(main_header, width=14) 
     for line in lines_main:
         draw.text((x_text, y_text), line, font=font_large, fill=(255, 255, 255))
         y_text += 130 # Duży odstęp dla kolejnej linijki wielkiego tekstu
@@ -83,7 +83,7 @@ def generate_quote_card(main_header, sub_header):
     
     # 2. MAŁY NAGŁÓWEK (Rozwinięcie)
     # Większa szerokość wrapowania
-    lines_sub = textwrap.wrap(sub_header, width=35)
+    lines_sub = textwrap.wrap(sub_header, width=28)
     for line in lines_sub:
         draw.text((x_text, y_text), line, font=font_small, fill=(220, 220, 220))
         y_text += 60 # Mniejszy odstęp dla mniejszego tekstu
@@ -327,15 +327,14 @@ copywriter = Agent(
 )
 
 editor = Agent(
-    role='Ruthless Chief Editor',
-    goal='Ensure the post strictly adheres to the Kellton Europe brand voice and eliminate all AI fluff and corporate jargon.',
+    role='Ruthless Chief Editor & Punch-Up Writer',
+    goal='Ensure the post is not just clean, but CHARISMATIC, OPINIONATED, and slightly CYNICAL. Kill boring checklists.',
     backstory=(
-        "You are the no-nonsense editor at Kellton Europe. "
-        "Your job is to read the copywriter's draft and edit it according to kellton_brand_voice"
-        "You HATE words like: synergy, leverage, paradigm shift, game-changing, disrupt, revolutionary, utilize, actionable insights, low-hanging fruit, circle back, robust, seamless, state-of-the-art. "
-        "You ensure the tone is conversational, casual, and sharp. You write like you talk, using contractions (it's, you're, we'll). "
-        "If it sounds like an academic paper, a sales brochure, or typical AI-generated fluff, you rewrite it. "
-        "You demand active voice."
+        "You are the brilliant, no-nonsense editor at Kellton Europe. "
+        "Your job is NOT just to delete jargon, but to inject personality. "
+        "If a draft reads like a dry, boring manual or a clinical list of facts, you REWRITE IT to add a punchy, business-focused opinion. "
+        "You write like you talk to a peer at a bar. You demand active voice. "
+        "You always tie tech features to business consequences (lost money, wasted time, risk)."
     ),
     verbose=True
 )
@@ -467,13 +466,15 @@ with col2:
 
                 t_edit = Task(
                     description=(
-                        "Review the draft. "
-                        "LANGUAGE RULE: Write in English. Keep it under 150 words."
+                        "Review the copywriter's draft. "
+                        "1. Kill all jargon and corporate fluff. "
+                        "2. CRITICAL: If the text is just a dry list of facts or reads like a textbook, REWRITE IT entirely. Add a sharp, charismatic opinion. Focus on the business pain (cost, risk). "
+                        "3. Ensure contractions (it's, don't) are used to sound natural. "
+                        f"4. Maintain the requested {post_format} structure. "
                         "STRICT RULES: No metaphors. No 'Not just X, but Y'. "
-                        "Ensure the tone is casual, yet informative."
-                        f"3. CRITICAL: Maintain the requested {post_format} structure. If it is a Poll, do not turn it into a standard post."
+                        "LANGUAGE RULE: Write in English. Keep it under 150 words."
                     ),
-                    expected_output="Final polished content.",
+                    expected_output="Final, polished, charismatic, and punchy content with a clear opinion.",
                     agent=editor
                 )
                 tasks_list.append(t_edit)
