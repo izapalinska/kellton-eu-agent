@@ -1,4 +1,8 @@
 import os
+import random
+from PIL import Image, ImageDraw, ImageFont
+import textwrap
+import io
 import streamlit as st
 import pandas as pd
 import streamlit.components.v1 as components
