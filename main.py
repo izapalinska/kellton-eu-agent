@@ -63,7 +63,7 @@ def generate_quote_card(main_header, sub_header):
     draw = ImageDraw.Draw(img)
     
     try:
-        # Ładujemy dwa rozmiary tego samego fontu
+        # Dwa rozmiary fonyu
         font_large = ImageFont.truetype("Figtree-Medium.ttf", 120) # Główny, duży tytuł
         font_small = ImageFont.truetype("Figtree-Medium.ttf", 45) # Mniejszy podtytuł
     except IOError:
@@ -73,7 +73,7 @@ def generate_quote_card(main_header, sub_header):
     x_text = 65
     y_text = 320 # Punkt startowy od góry
     
-    # 1. Rysujemy DUŻY NAGŁÓWEK
+    # 1. DUŻY NAGŁÓWEK
     lines_main = textwrap.wrap(main_header, width=18) 
     for line in lines_main:
         draw.text((x_text, y_text), line, font=font_large, fill=(255, 255, 255))
@@ -81,12 +81,10 @@ def generate_quote_card(main_header, sub_header):
         
     y_text += 80 # Dodatkowy, pusty odstęp między nagłówkami
     
-    # 2. Rysujemy MAŁY NAGŁÓWEK (Rozwinięcie)
-    # Większa szerokość wrapowania, bo font jest mniejszy
+    # 2. MAŁY NAGŁÓWEK (Rozwinięcie)
+    # Większa szerokość wrapowania
     lines_sub = textwrap.wrap(sub_header, width=35)
     for line in lines_sub:
-        # Możemy dać mu lekko szarawy odcień RGB(200,200,200), żeby duży tekst bardziej krzyczał, 
-        # albo zostawić czystą biel (255,255,255)
         draw.text((x_text, y_text), line, font=font_small, fill=(220, 220, 220))
         y_text += 60 # Mniejszy odstęp dla mniejszego tekstu
         
@@ -332,10 +330,10 @@ editor = Agent(
     role='Ruthless Chief Editor',
     goal='Ensure the post strictly adheres to the Kellton Europe brand voice and eliminate all AI fluff and corporate jargon.',
     backstory=(
-        "You are the brutal, no-nonsense editor at Kellton Europe. "
-        "Your job is to read the copywriter's draft and ruthlessly edit it. "
+        "You are the no-nonsense editor at Kellton Europe. "
+        "Your job is to read the copywriter's draft and edit it according to kellton_brand_voice"
         "You HATE words like: synergy, leverage, paradigm shift, game-changing, disrupt, revolutionary, utilize, actionable insights, low-hanging fruit, circle back, robust, seamless, state-of-the-art. "
-        "You ensure the tone is confident, casual, and sharp. You write like you talk, using contractions (it's, you're, we'll). "
+        "You ensure the tone is conversational, casual, and sharp. You write like you talk, using contractions (it's, you're, we'll). "
         "If it sounds like an academic paper, a sales brochure, or typical AI-generated fluff, you rewrite it. "
         "You demand active voice."
     ),
@@ -364,7 +362,7 @@ with st.sidebar:
     
     st.download_button(label="EXPORT CSV", data=hist_df.to_csv(index=False).encode('utf-8-sig'), file_name="kellton_data.csv", mime="text/csv", use_container_width=True)
 
-# --- 8. WIDOK GŁÓWNY ---
+# --- 8. MAIN VIEW ---
 st.markdown('<h1 class="main-title">KELLTON EUROPE</h1>', unsafe_allow_html=True)
 st.markdown('<span class="serif-akcent">Social Media Specialist</span>', unsafe_allow_html=True)
 
@@ -379,12 +377,12 @@ with col1:
     ''', unsafe_allow_html=True)
     temat = st.text_area("", height=250, placeholder="Use any input language you want and separate each idea with ---", label_visibility="collapsed")
     
-    # DODANY TOGGLE:
+    #  TOGGLE:
     use_research = st.toggle("🔍 Enable web research", value=True, help="Turn off to generate a post strictly from your input without searching the web.")
 
     source_url = st.text_input("Source URL (Optional)", placeholder="Paste a link to a blog post, news, or report...")
    
-    # DODANY WYBÓR FORMATU:
+    # FORMAT CHOICE:
     post_format = st.selectbox(
         "Select post format",
         options=["Standard post", "Carousel outline", "LinkedIn poll", "Case study"],
@@ -406,9 +404,9 @@ with col2:
     if 'wygenerowane_posty' not in st.session_state:
         st.session_state.wygenerowane_posty = []
 
-    # --- 2. FAZA GENEROWANIA (Pracuje tylko po kliknięciu "GET TO WORK") ---
+    # --- 2. FAZA GENEROWANIA ---
     if btn and temat:
-        st.session_state.wygenerowane_posty = [] # Czyścimy starą pamięć
+        st.session_state.wygenerowane_posty = [] # czyszczenie starej pamieci
         lista_tematow = [t.strip() for t in temat.split('---') if t.strip()]
         
         for index, pojedynczy_temat in enumerate(lista_tematow):
@@ -451,6 +449,7 @@ with col2:
                         f"{format_rules} "
                         "STRICT RULES: No metaphors. No 'Not just X, but Y'. "
                         "LANGUAGE RULE: Write in English. Keep it under 150 words."
+                        "Keep the casual, conversational tone"
                     )
                 else:
                     t1_desc = (
@@ -459,6 +458,7 @@ with col2:
                         f"{format_rules} "
                         "STRICT RULES: No metaphors. No 'Not just X, but Y'. "
                         "LANGUAGE RULE: Write in English. Keep it under 150 words."
+                        "Keep the casual, conversational tone"
                     )
 
                 t1 = Task(description=t1_desc, expected_output="A charismatic LinkedIn content.", agent=copywriter)
@@ -468,8 +468,6 @@ with col2:
                 t_edit = Task(
                     description=(
                         "Review the draft. "
-                        "1. Kill all jargon. "
-                        "2. Ensure contractions are used. "
                         "LANGUAGE RULE: Write in English. Keep it under 150 words."
                         "STRICT RULES: No metaphors. No 'Not just X, but Y'. "
                         "Ensure the tone is casual, yet informative."
@@ -489,7 +487,7 @@ with col2:
                 crew = Crew(agents=agents_list, tasks=tasks_list)
                 crew.kickoff()
                 
-                # Zbieranie wyników po cichu
+                # Zbieranie wyników
                 post_text = getattr(t_edit.output, 'raw_output', str(t_edit.output))
                 
                 if post_format != "LinkedIn poll":
@@ -505,7 +503,7 @@ with col2:
                 save_to_history(pojedynczy_temat, f"{post_text}\n\nPrompt: {visual_prompt}")
                 send_external_notification(pojedynczy_temat)
                 
-                # ZAPIS DO PAMIĘCI STREAMLITA (Kluczowy krok)
+                # ZAPIS DO PAMIĘCI STREAMLITA
                 st.session_state.wygenerowane_posty.append({
                     "post_text": post_text,
                     "visual_prompt": visual_prompt,
@@ -580,7 +578,7 @@ with col2:
                     header_input = st.text_area("Main header", value="Blah blah blah", height=80, key=f"head_{index}")
                     sub_header_input = st.text_area("Subtitle", value="Even more blah blah", height=80, key=f"sub_{index}")
                     
-                    if st.button("Wygeneruj PNG", key=f"btn_img_{index}"):
+                    if st.button("Generate PNG", key=f"btn_img_{index}"):
                         gotowa_grafika = generate_quote_card(header_input, sub_header_input)
                         st.image(gotowa_grafika, caption="Twój nowy post", use_container_width=True)
                         st.download_button(
@@ -591,9 +589,9 @@ with col2:
                             use_container_width=True
                         )
             
-            # --- ŹRÓDŁA (TERAZ BEZPIECZNIE CZYTAJĄCE Z PAMIĘCI) ---
+            # --- ŹRÓDŁA ---
             with st.expander("🔍 Sources, please!"):
-                # Tu czytamy z 'dane', a nie z 't0'!
+                # Tu z 'dane', a nie z 't0'!
                 st.write(dane['research_out'])
 
 
