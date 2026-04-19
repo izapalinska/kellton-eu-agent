@@ -367,14 +367,16 @@ with col2:
                     
                     t1_desc = (
                         f"Write a charismatic, conversational LinkedIn post based on the research provided for the topic: '{pojedynczy_temat}'. "
-                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. Follow the 2-1-3 structure. "
+                        f"{format_rules} "
+                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. "
                         "LANGUAGE RULE: The final post MUST be written in English. Keep it under 120-150 words."
                     )
                 else:
                     t1_desc = (
                         f"Write a charismatic, conversational LinkedIn post based EXACTLY and ONLY on this input: '{pojedynczy_temat}'. "
                         "Do not search for external facts. "
-                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. Follow the 2-1-3 structure. "
+                        f"{format_rules} "
+                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. "
                         "LANGUAGE RULE: The final post MUST be written in English. Keep it under 120-150 words."
                     )
 
