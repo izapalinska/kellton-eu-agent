@@ -278,6 +278,20 @@ copywriter = Agent(
     tools=[scrape_tool]
 )
 
+editor = Agent(
+    role='Ruthless Chief Editor',
+    goal='Ensure the post strictly adheres to the Kellton Europe brand voice and eliminate all AI fluff and corporate jargon.',
+    backstory=(
+        "You are the brutal, no-nonsense editor at Kellton Europe. "
+        "Your job is to read the copywriter's draft and ruthlessly edit it. "
+        "You HATE words like: synergy, leverage, paradigm shift, game-changing, disrupt, revolutionary, utilize, actionable insights, low-hanging fruit, circle back, robust, seamless, state-of-the-art. "
+        "You ensure the tone is confident, casual, and sharp. You write like you talk, using contractions (it's, you're, we'll). "
+        "If it sounds like an academic paper, a sales brochure, or typical AI-generated fluff, you rewrite it. "
+        "You demand active voice."
+    ),
+    verbose=True
+)
+
 art_director = Agent(
     role='Art Director',
     goal='Generate ONE Midjourney prompt.',
@@ -396,6 +410,20 @@ with col2:
                 )
                 tasks_list.append(t1)
                 agents_list.append(copywriter)
+                tasks_list.append(t_edit)
+                agents_list.append(editor)
+
+                t_edit = Task(
+                    description=(
+                        "Review and refine the draft provided by the copywriter. "
+                        "1. Eliminate ALL forbidden words and corporate jargon. "
+                        "2. Ensure contractions are used and the tone is conversational, natural, and professional ('No bullshit' rule). "
+                        "3. Keep the requested format intact (Carousel, Poll, Standard, etc.). "
+                        "STRICT RULE: Output ONLY the final polished text. Do not add any introductory phrases like 'Here is the edited text' or commentary."
+                    ),
+                    expected_output="The final, polished LinkedIn post, fully compliant with the brand voice.",
+                    agent=editor
+                )
 
                 t2 = Task(
                     description="Nano Banana prompt for this post.", 
@@ -409,7 +437,7 @@ with col2:
                 crew = Crew(agents=agents_list, tasks=tasks_list)
                 crew.kickoff()
                 
-                post_text = getattr(t1.output, 'raw_output', str(t1.output))
+                post_text = getattr(t_edit.output, 'raw_output', str(t_edit.output))
                 visual_prompt = getattr(t2.output, 'raw_output', str(t2.output))
                 save_to_history(pojedynczy_temat, f"{post_text}\n\nPrompt: {visual_prompt}")
                 
