@@ -46,6 +46,54 @@ def send_external_notification(topic):
         })
     except:
         pass
+
+def generate_quote_card(main_header, sub_header):
+    bg_folder = "backgrounds"
+    try:
+        bg_files = [f for f in os.listdir(bg_folder) if f.endswith(('.png', '.jpg'))]
+        if not bg_files:
+            raise FileNotFoundError("Folder is empty!")
+        random_bg = random.choice(bg_files)
+        bg_path = os.path.join(bg_folder, random_bg)
+        img = Image.open(bg_path)
+    except (FileNotFoundError, OSError):
+        # Format 1080x1350 (pion)
+        img = Image.new('RGB', (1080, 1350), color=(15, 15, 18))
+    
+    draw = ImageDraw.Draw(img)
+    
+    try:
+        # Ładujemy dwa rozmiary tego samego fontu
+        font_large = ImageFont.truetype("figtree.ttf", 85) # Główny, duży tytuł
+        font_small = ImageFont.truetype("figtree.ttf", 45) # Mniejszy podtytuł
+    except IOError:
+        font_large = ImageFont.load_default()
+        font_small = ImageFont.load_default()
+
+    x_text = 120
+    y_text = 350 # Punkt startowy od góry
+    
+    # 1. Rysujemy DUŻY NAGŁÓWEK
+    # Mniejsza szerokość wrapowania (np. 18 znaków), bo font jest ogromny
+    lines_main = textwrap.wrap(main_header, width=18) 
+    for line in lines_main:
+        draw.text((x_text, y_text), line, font=font_large, fill=(255, 255, 255))
+        y_text += 100 # Duży odstęp dla kolejnej linijki wielkiego tekstu
+        
+    y_text += 50 # Dodatkowy, pusty odstęp między nagłówkami
+    
+    # 2. Rysujemy MAŁY NAGŁÓWEK (Rozwinięcie)
+    # Większa szerokość wrapowania, bo font jest mniejszy
+    lines_sub = textwrap.wrap(sub_header, width=35)
+    for line in lines_sub:
+        # Możemy dać mu lekko szarawy odcień RGB(200,200,200), żeby duży tekst bardziej krzyczał, 
+        # albo zostawić czystą biel (255,255,255)
+        draw.text((x_text, y_text), line, font=font_small, fill=(220, 220, 220))
+        y_text += 60 # Mniejszy odstęp dla mniejszego tekstu
+        
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return buf.getvalue()
     
     
 # --- 3. CUSTOM CSS (FULL REPAIRED VERSION) ---
@@ -432,22 +480,29 @@ with col2:
                 tasks_list.append(t_edit)
                 agents_list.append(editor)
 
-                # --- 4. ART DIRECTOR ---
-                t2 = Task(
-                    description="Nano Banana prompt for this post.", 
-                    expected_output="Prompt string.", 
-                    agent=art_director
-                )
-                tasks_list.append(t2)
-                agents_list.append(art_director)
+                # --- 4. ART DIRECTOR (Warunkowy) ---
+                # Odpalamy agenta od promptów TYLKO jeśli to NIE jest ankieta
+                if post_format != "LinkedIn poll":
+                    t2 = Task(
+                        description="Nano Banana prompt for this post.", 
+                        expected_output="Prompt string.", 
+                        agent=art_director
+                    )
+                    tasks_list.append(t2)
+                    agents_list.append(art_director)
                 
                 # --- ODPALENIE MASZYNY ---
                 crew = Crew(agents=agents_list, tasks=tasks_list)
                 crew.kickoff()
                 
-                # Pobieramy wynik od redaktora (t_edit)
+                # Pobieramy wynik od redaktora
                 post_text = getattr(t_edit.output, 'raw_output', str(t_edit.output))
-                visual_prompt = getattr(t2.output, 'raw_output', str(t2.output))
+                
+                # Pobieramy prompt wizualny warunkowo
+                if post_format != "LinkedIn poll":
+                    visual_prompt = getattr(t2.output, 'raw_output', str(t2.output))
+                else:
+                    visual_prompt = "N/A - Polls do not require images."
                 
                 save_to_history(pojedynczy_temat, f"{post_text}\n\nPrompt: {visual_prompt}")
                 
@@ -514,6 +569,26 @@ with col2:
                 components.html(html_code, height=550, scrolling=True)
                 
                 st.markdown("<br>", unsafe_allow_html=True)
+                
+                # --- TUTAJ DODAJEMY UI DO GRAFIK ---
+                if post_format in ["Standard post", "Case study"]:
+                    with st.expander("Generate simple graphic"):
+                        
+                        header_input = st.text_area("Duży nagłówek (Główny przekaz)", value="Twoje hasło...", height=80, key=f"head_{index}")
+                        sub_header_input = st.text_area("Mały tekst (Rozwinięcie)", value="Krótkie wyjaśnienie, które pojawi się niżej.", height=80, key=f"sub_{index}")
+                        
+                        if st.button("Wygeneruj PNG", key=f"btn_img_{index}"):
+                            gotowa_grafika = generate_quote_card(header_input, sub_header_input)
+                            st.image(gotowa_grafika, caption="TYour new post", use_container_width=True)
+                            
+                            st.download_button(
+                                label="⬇️ DOWNLOAD PNG",
+                                data=gotowa_grafika,
+                                file_name=f"kellton_post_{index}.png",
+                                mime="image/png",
+                                use_container_width=True
+                            )
+                # -----------------------------------
                 
                 with st.expander("🔍 Sources, please!"):
                     if use_research:
