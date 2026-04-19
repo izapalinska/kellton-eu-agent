@@ -37,22 +37,17 @@ The system uses an **Agentic Workflow**. Instead of one prompt, you have four sp
 * **Multi-format support:** Choose between **Standard Posts, Carousels, LinkedIn Polls, or Case Studies**. The system adjusts the structure automatically.
 
 <p align="center">
-  <img src="assets/types.png" width="75%">
+  <img src="assets/types.png" width="50%">
 </p>
 
 * **Research toggle:** Want a post based *only* on your thoughts? Turn off web research with one click.
 * **Instant visuals:** Generate ready-to-use PNG quote cards directly in the app. No need to open Canva for a simple insight.
 
 <p align="center">
-  <img src="assets/imggenerator.png" width="75%">
+  <img src="assets/imggenerator.png" width="50%">
 </p>
 
 * **Source transparency:** Every researched post comes with a "Sources, please!" section so you can verify the data.
-
-<p align="center">
-  <img src="assets/sources.png" width="75%">
-</p>
-
 * **Anti-AI filter:** Hard-coded ban on words like *synergy, leverage, paradigm shift,* and *revolutionary*.
 
 *Built with Python and a passion for procrastination*
