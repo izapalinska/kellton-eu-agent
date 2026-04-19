@@ -576,15 +576,15 @@ with col2:
             
             # --- MODUŁ DO GRAFIK ---
             if dane['format'] in ["Standard post", "Case study"]:
-                with st.expander("🎨 Generate simple graphic"):
-                    header_input = st.text_area("Duży nagłówek (Główny przekaz)", value="Twoje hasło...", height=80, key=f"head_{index}")
-                    sub_header_input = st.text_area("Mały tekst (Rozwinięcie)", value="Krótkie wyjaśnienie, które pojawi się niżej.", height=80, key=f"sub_{index}")
+                with st.expander("Generate simple graphic"):
+                    header_input = st.text_area("Main header", value="Blah blah blah", height=80, key=f"head_{index}")
+                    sub_header_input = st.text_area("Subtitle", value="Even more blah blah", height=80, key=f"sub_{index}")
                     
                     if st.button("Wygeneruj PNG", key=f"btn_img_{index}"):
                         gotowa_grafika = generate_quote_card(header_input, sub_header_input)
                         st.image(gotowa_grafika, caption="Twój nowy post", use_container_width=True)
                         st.download_button(
-                            label="⬇️ DOWNLOAD PNG",
+                            label="DOWNLOAD PNG",
                             data=gotowa_grafika,
                             file_name=f"kellton_post_{index}.png",
                             mime="image/png",
