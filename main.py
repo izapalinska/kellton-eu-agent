@@ -356,21 +356,22 @@ with col2:
         for index, pojedynczy_temat in enumerate(lista_tematow):
             with st.spinner(f'Processing Batch {index + 1}...'):
                 
-                # --- 0. DEFINICJA FORMATU (To zgubiliśmy wcześniej!) ---
+                # --- 0. DEFINICJA FORMATU (TERAZ Z JASNYM ROZDZIAŁEM) ---
                 format_rules = ""
-                if post_format == "Carousel Outline":
-                    format_rules = "FORMAT RULE: Write this as a text outline for a LinkedIn Carousel. Structure it strictly as 'Slide 1:', 'Slide 2:', etc. Keep the text on each slide extremely punchy and short."
-                elif post_format == "LinkedIn Poll":
-                    format_rules = "FORMAT RULE: Write this as a LinkedIn Poll. Open with a provocative question, give 1-2 sentences of context, and explicitly list 3-4 poll voting options at the end."
-                elif post_format == "Case Study":
-                    format_rules = "FORMAT RULE: Write this as a mini case-study. Structure: 1. The Problem, 2. The Fix, 3. The Result. Keep it grounded in reality."
+                if post_format == "Carousel outline":
+                    format_rules = "OVERRIDE STRUCTURE: Do NOT use the 2-1-3 rule. Write this strictly as a LinkedIn Carousel outline (Slide 1, Slide 2, etc.)."
+                elif post_format == "LinkedIn poll":
+                    format_rules = "OVERRIDE STRUCTURE: Do NOT use the 2-1-3 rule. Write this strictly as a LinkedIn Poll (Question -> Context -> Options)."
+                elif post_format == "Case study":
+                    format_rules = "OVERRIDE STRUCTURE: Do NOT use the 2-1-3 rule. Use a Case Study structure (Problem, Fix, Result)."
                 else:
-                    format_rules = "FORMAT RULE: Standard text post. Strictly follow the 2-1-3 structure defined in your identity."
+                    # Tylko tutaj wymuszamy 2-1-3
+                    format_rules = "STRUCTURE RULE: Strictly follow the 2-1-3 structure (Hook, Meat, Takeaway) as defined in your identity."
 
                 tasks_list = []
                 agents_list = []
 
-                # --- 1. BADACZ (Opcjonalny) ---
+                # --- 1. BADACZ (Bez zmian) ---
                 if use_research:
                     if source_url:
                         research_prompt = f"Scrape and analyze the content from this URL: {source_url}. Focus on how it relates to: '{pojedynczy_temat}'."
@@ -380,50 +381,49 @@ with col2:
                     t0 = Task(
                         description=(
                             f"{research_prompt} "
-                            "STRICT RULE: Return ONLY the numbered list of key facts, data points, and summaries. "
-                            "If scraping a URL, extract the most important business insights. "
-                            "DO NOT include conversational filler. Start immediately with point 1."
+                            "STRICT RULE: Return ONLY the numbered list of key facts and insights. No filler."
                         ),
-                        expected_output="A clean, direct, numbered list of facts and insights. No filler.",
+                        expected_output="A clean, direct, numbered list of facts.",
                         agent=researcher
                     )
                     tasks_list.append(t0)
                     agents_list.append(researcher)
                     
+                    # USUNĘLIŚMY "Follow the 2-1-3" z końca - teraz siedzi w format_rules
                     t1_desc = (
                         f"Write a charismatic LinkedIn post based on the research provided. "
                         f"{format_rules} "
-                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. Follow the 2-1-3 structure. "
+                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. "
                         "LANGUAGE RULE: Write in English. Keep it under 150 words."
                     )
                 else:
+                    # Tu również usuwamy sztywne 2-1-3 z końca opisu
                     t1_desc = (
-                        f"Write a charismatic, conversational LinkedIn post based EXACTLY and ONLY on this input: '{pojedynczy_temat}'. "
+                        f"Write a charismatic LinkedIn post based EXACTLY on this input: '{pojedynczy_temat}'. "
                         "Do not search for external facts. "
                         f"{format_rules} "
-                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. "
-                        "LANGUAGE RULE: The final post MUST be written in English. Keep it under 120-150 words."
+                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. "
+                        "LANGUAGE RULE: Write in English. Keep it under 150 words."
                     )
 
                 # --- 2. COPYWRITER ---
                 t1 = Task(
                     description=t1_desc,
-                    expected_output="A conversational and insightful LinkedIn post. Zero hype, zero corporate metaphors.",
+                    expected_output="A charismatic LinkedIn content in the requested format.",
                     agent=copywriter
                 )
                 tasks_list.append(t1)
                 agents_list.append(copywriter)
 
-                # --- 3. REDAKTOR (Strażnik Marki) ---
+                # --- 3. REDAKTOR (Dodajemy mu przypomnienie o formacie) ---
                 t_edit = Task(
                     description=(
-                        "Review and refine the draft provided by the copywriter. "
-                        "1. Eliminate ALL forbidden words and corporate jargon. "
-                        "2. Ensure contractions are used and the tone is conversational but professional ('No bullshit' rule). "
-                        "3. Keep the requested format intact (Carousel, Poll, Standard, etc.). "
-                        "STRICT RULE: Output ONLY the final polished text. Do not add any introductory phrases like 'Here is the edited text' or commentary."
+                        "Review the draft. "
+                        "1. Kill all jargon. "
+                        "2. Ensure contractions are used. "
+                        f"3. CRITICAL: Maintain the requested {post_format} structure. If it is a Poll, do not turn it into a standard post."
                     ),
-                    expected_output="The final, polished LinkedIn post, fully compliant with the brand voice.",
+                    expected_output="Final polished content.",
                     agent=editor
                 )
                 tasks_list.append(t_edit)
