@@ -264,10 +264,10 @@ EXAMPLES OF THE REAL KELLTON STYLE:
 
 researcher = Agent(
     role='Senior Market Researcher',
-    goal='Search for 2026 data and trends.',
-    backstory='Sharp B2B researcher. Translates topics into English queries.',
+    goal='Search for 2026 data and trends or extract content from specific URLs.',
+    backstory='Sharp B2B researcher. Translates topics into English queries and extracts key insights from websites.',
     verbose=True,
-    tools=[search_tool]
+    tools=[search_tool, scrape_tool] # scrape_tool TUTAJ
 )
 
 copywriter = Agent(
@@ -317,7 +317,9 @@ with col1:
     
     # DODANY TOGGLE:
     use_research = st.toggle("🔍 Enable web research", value=True, help="Turn off to generate a post strictly from your input without searching the web.")
-    
+
+    source_url = st.text_input("Source URL (Optional)", placeholder="Paste a link to a blog post, news, or report...")
+   
     # DODANY WYBÓR FORMATU:
     post_format = st.selectbox(
         "Select post format",
@@ -353,23 +355,30 @@ with col2:
                 agents_list = []
 
                 if use_research:
+                    # Sprawdzamy, czy podałaś link, czy tylko temat
+                    if source_url:
+                        research_prompt = f"Scrape and analyze the content from this URL: {source_url}. Focus on how it relates to: '{pojedynczy_temat}'."
+                    else:
+                        research_prompt = f"Find 2026 news on: '{pojedynczy_temat}'."
+
                     t0 = Task(
                         description=(
-                            f"Find 2026 news on: '{pojedynczy_temat}'. "
-                            "STRICT RULE: Return ONLY the numbered list of sources, URLs, and summaries. "
-                            "DO NOT include any apologies, disclaimers, or conversational filler."
+                            f"{research_prompt} "
+                            "STRICT RULE: Return ONLY the numbered list of key facts, data points, and summaries. "
+                            "If scraping a URL, extract the most important business insights. "
+                            "DO NOT include conversational filler. Start immediately with point 1."
                         ),
-                        expected_output="A clean, direct, numbered list of facts and URLs.",
+                        expected_output="A clean, direct, numbered list of facts and insights. No filler.",
                         agent=researcher
                     )
                     tasks_list.append(t0)
                     agents_list.append(researcher)
                     
                     t1_desc = (
-                        f"Write a charismatic, conversational LinkedIn post based on the research provided for the topic: '{pojedynczy_temat}'. "
+                        f"Write a charismatic LinkedIn post based on the research provided. "
                         f"{format_rules} "
-                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. No 'In 2026' starters. "
-                        "LANGUAGE RULE: The final post MUST be written in English. Keep it under 120-150 words."
+                        "STRICT RULES: No metaphors. No 'Not just X, but Y'. Follow the 2-1-3 structure. "
+                        "LANGUAGE RULE: Write in English. Keep it under 150 words."
                     )
                 else:
                     t1_desc = (
