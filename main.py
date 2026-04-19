@@ -64,8 +64,8 @@ def generate_quote_card(main_header, sub_header):
     
     try:
         # Ładujemy dwa rozmiary tego samego fontu
-        font_large = ImageFont.truetype("figtree.ttf", 85) # Główny, duży tytuł
-        font_small = ImageFont.truetype("figtree.ttf", 45) # Mniejszy podtytuł
+        font_large = ImageFont.truetype("Figtree-VariableFont_wght.ttf", 120) # Główny, duży tytuł
+        font_small = ImageFont.truetype("Figtree-VariableFont_wght.ttf", 45) # Mniejszy podtytuł
     except IOError:
         font_large = ImageFont.load_default()
         font_small = ImageFont.load_default()
