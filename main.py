@@ -2,6 +2,7 @@ import os
 import streamlit as st
 import pandas as pd
 import streamlit.components.v1 as components
+import requests
 from datetime import datetime
 from crewai import Agent, Task, Crew
 from crewai_tools import ScrapeWebsiteTool
@@ -27,17 +28,20 @@ def load_history():
         return pd.read_csv(FILE_NAME, encoding='utf-8-sig')
     return pd.DataFrame(columns=['Date', 'Topic/Notes', 'Generated Content'])
 
-def notify_done():
-    # 1. Wyświetla ładny komunikat w rogu aplikacji
-    st.toast("We're done!", icon="⚡")
+def send_external_notification(topic):
+    # Wymyśl bardzo nietypową nazwę kanału (np. z ciągiem cyfr, żeby nikt tu nie wszedł)
+    url = "https://ntfy.sh/kellton_content_alerts_8833" 
     
-    # 2. Odtwarza krótki, dyskretny dźwięk (usłyszysz z innej zakładki)
-    audio_html = """
-        <audio autoplay="true" style="display:none;">
-            <source src="https://upload.wikimedia.org/wikipedia/commons/4/43/Beep.ogg" type="audio/ogg">
-        </audio>
-    """
-    st.markdown(audio_html, unsafe_allow_html=True)
+    wiadomosc = f"Post: {topic} is ready!"
+    
+    try:
+        # Wysyłamy sygnał push
+        requests.post(url, data=wiadomosc.encode('utf-8'), headers={
+            "Title": "Kellton Content Engine",
+            "Tags": "white_check_mark"
+        })
+    except:
+        pass
     
     
 # --- 3. CUSTOM CSS (FULL REPAIRED VERSION) ---
@@ -515,7 +519,7 @@ with col2:
                         
                
                 # NOWE WYWOŁANIE POWIADOMIENIA:
-                notify_done()
+                send_external_notification(pojedynczy_temat)
 
             
 
