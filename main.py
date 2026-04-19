@@ -27,6 +27,24 @@ def load_history():
         return pd.read_csv(FILE_NAME, encoding='utf-8-sig')
     return pd.DataFrame(columns=['Date', 'Topic/Notes', 'Generated Content'])
 
+def trigger_notification(title, body):
+    js_code = f"""
+    <script>
+        if ("Notification" in window) {{
+            if (Notification.permission === "granted") {{
+                new Notification("{title}", {{body: "{body}"}});
+            }} else if (Notification.permission !== "denied") {{
+                Notification.requestPermission().then(permission => {{
+                    if (permission === "granted") {{
+                        new Notification("{title}", {{body: "{body}"}});
+                    }}
+                }});
+            }}
+        }}
+    </script>
+    """
+    components.html(js_code, height=0, width=0)
+    
 # --- 3. CUSTOM CSS (FULL REPAIRED VERSION) ---
 st.markdown("""
     <style>
@@ -410,4 +428,6 @@ with col2:
                 
                 with st.expander("🔍 Sources, please!"):
                     st.write(getattr(t0.output, 'raw_output', str(t0.output)))
+
+                trigger_notification("We're ready!", f"Post about: {pojedynczy_temat} is done")
 
