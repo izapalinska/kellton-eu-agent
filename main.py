@@ -64,23 +64,22 @@ def generate_quote_card(main_header, sub_header):
     
     try:
         # Ładujemy dwa rozmiary tego samego fontu
-        font_large = ImageFont.truetype("Figtree-VariableFont_wght.ttf", 120) # Główny, duży tytuł
-        font_small = ImageFont.truetype("Figtree-VariableFont_wght.ttf", 45) # Mniejszy podtytuł
+        font_large = ImageFont.truetype("Figtree-Medium.ttf", 120) # Główny, duży tytuł
+        font_small = ImageFont.truetype("Figtree-Medium.ttf", 45) # Mniejszy podtytuł
     except IOError:
         font_large = ImageFont.load_default()
         font_small = ImageFont.load_default()
 
-    x_text = 120
-    y_text = 350 # Punkt startowy od góry
+    x_text = 65
+    y_text = 320 # Punkt startowy od góry
     
     # 1. Rysujemy DUŻY NAGŁÓWEK
-    # Mniejsza szerokość wrapowania (np. 18 znaków), bo font jest ogromny
     lines_main = textwrap.wrap(main_header, width=18) 
     for line in lines_main:
         draw.text((x_text, y_text), line, font=font_large, fill=(255, 255, 255))
-        y_text += 100 # Duży odstęp dla kolejnej linijki wielkiego tekstu
+        y_text += 130 # Duży odstęp dla kolejnej linijki wielkiego tekstu
         
-    y_text += 50 # Dodatkowy, pusty odstęp między nagłówkami
+    y_text += 80 # Dodatkowy, pusty odstęp między nagłówkami
     
     # 2. Rysujemy MAŁY NAGŁÓWEK (Rozwinięcie)
     # Większa szerokość wrapowania, bo font jest mniejszy
