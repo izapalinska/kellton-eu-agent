@@ -6,3 +6,5 @@ pandas
 crewai-tools
 langchain-community
 tavily-python
+Pillow
+requests
