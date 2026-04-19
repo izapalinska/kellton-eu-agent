@@ -314,6 +314,10 @@ with col1:
         </div>
     ''', unsafe_allow_html=True)
     temat = st.text_area("", height=250, placeholder="Use any input language you want and separate each idea with ---", label_visibility="collapsed")
+    
+    # DODANY TOGGLE:
+    use_research = st.toggle("🔍 Enable web research", value=True, help="Turn off to generate a post strictly from your input without searching the web.")
+    
     btn = st.button("GET TO WORK, BRO")
 
 
